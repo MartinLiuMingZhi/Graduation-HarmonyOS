@@ -1,8 +1,8 @@
 import { router } from '@kit.ArkUI';
 import { TopView } from '../view/TopView';
 import {login, LoginResponse} from '../apis/api'
-import { TokenUtil } from '../util/TokenUtil';
 import promptAction from '@ohos.promptAction'
+import { PreferencesUtil } from '../utils/PreferencesUtil';
 
 @Entry
 @Component
@@ -103,7 +103,8 @@ struct LoginPage {
       })
       console.log('Received login response:', JSON.stringify(result));
       if (result.code === '200') {
-        TokenUtil.setToken(result.data.token)
+        // TokenUtil.setToken(result.data.token)
+        PreferencesUtil.put('token', result.data.token)
         router.pushUrl({
           url:'pages/MainPage'
         })

@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig,AxiosRequestConfig } from '@ohos/axios'
-import {TokenUtil} from '../util/TokenUtil'
+import { PreferencesUtil } from '../utils/PreferencesUtil';
+import {TokenUtil} from '../utils/TokenUtil'
 
 interface BaseResponse<T>{
   code?:string,
@@ -18,7 +19,7 @@ const instance = axios.create({
 
 // 添加请求拦截器
 instance.interceptors.request.use((config:InternalAxiosRequestConfig)=>{
-  const token = TokenUtil.getToken();
+  const token = PreferencesUtil.get('token') as string
   if (token) {
     config.headers['Authorization'] = 'Bearer ' + token;
   }

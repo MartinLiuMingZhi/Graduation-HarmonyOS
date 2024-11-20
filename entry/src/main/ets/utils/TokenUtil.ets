@@ -1,8 +1,10 @@
 import { preferences } from '@kit.ArkData'
 import AppStorage from './AppStorage'
 
-
-const PREFERENCES_NAME = 'my_preferences'
+/**
+ * 暂时不用，统一整合到PreferencesUtil中使用
+ */
+const PREFERENCES_NAME = 'graduation_preferences'
 const TOKEN_KEY = 'token'
 
 /**

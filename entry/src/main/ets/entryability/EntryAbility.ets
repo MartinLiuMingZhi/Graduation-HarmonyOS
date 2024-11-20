@@ -1,14 +1,16 @@
 import { AbilityConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
-import AppStorage from '../util/AppStorage';
+import { PreferencesUtil } from '../utils/PreferencesUtil';
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onCreate');
 
-    const appStorage = AppStorage.getInstance()
-    appStorage.setContext(this.context)
+    // const appStorage = AppStorage.getInstance()
+    // appStorage.setContext(this.context)
+
+    PreferencesUtil.init(this.context)
   }
 
   onDestroy(): void {
