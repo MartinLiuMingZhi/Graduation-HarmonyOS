@@ -7,6 +7,10 @@
     {
       "name": "light_blue",
       "value": "#FF6DA8E9"
+    },
+    {
+      "name": "blue",
+      "value": "#007DFF"
     }
   ]
 }
