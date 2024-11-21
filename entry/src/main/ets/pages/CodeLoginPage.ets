@@ -1,4 +1,7 @@
 import { TopView } from '../view/TopView';
+import {CountdownButton} from '../view/CountdownButton'
+import { sendCode } from '../apis/mail';
+
 
 @Entry
 @Component
@@ -21,9 +24,10 @@ struct CodeLoginPage {
         TextInput({placeholder:'请输入邮箱验证码'})
           .width('60%')
 
-        Button('获取验证码')
-          .width('30%')
-          .type(ButtonType.Capsule)
+        CountdownButton()
+          .onClick(()=>{
+              this.handleGetCode()
+          })
       }
       .width('90%')
       .justifyContent(FlexAlign.SpaceBetween)
@@ -49,5 +53,18 @@ struct CodeLoginPage {
     }
     .width('100%')
 
+  }
+
+  private async handleGetCode() {
+    try {
+      const result = await sendCode<string>(this.email);
+      if (result.code === '200') {
+        console.info("获取验证码成功");
+      } else {
+        console.info('获取验证码失败')
+      }
+    } catch (error) {
+      console.error('获取验证码请求失败:', error);
+    }
   }
 }

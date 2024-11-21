@@ -5,7 +5,7 @@ export struct CountdownButton {
   private intervalId: number| null = null; // 保存计时器 ID
 
   @Prop text: string = '获取验证码'; // 按钮默认文字
-  @Prop duration: number = 10; // 倒计时时长
+  @Prop duration: number = 60; // 倒计时时长
 
   private startCountdown() {
     if (this.isCounting) return; // 防止重复点击
