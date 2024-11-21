@@ -105,7 +105,7 @@ struct LoginPage {
       if (result.code === '200') {
         // TokenUtil.setToken(result.data.token)
         PreferencesUtil.put('token', result.data.token)
-        router.pushUrl({
+        router.replaceUrl({
           url:'pages/MainPage'
         })
       }else {

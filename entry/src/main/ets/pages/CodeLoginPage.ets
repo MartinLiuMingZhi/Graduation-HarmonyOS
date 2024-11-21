@@ -35,6 +35,9 @@ struct CodeLoginPage {
       Button("登录")
         .width("90%")
         .type(ButtonType.Capsule)
+        .onClick(()=>{
+          console.log("登录")
+        })
 
 
       LoadingProgress()
