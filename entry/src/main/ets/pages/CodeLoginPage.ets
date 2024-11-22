@@ -1,6 +1,9 @@
 import { TopView } from '../view/TopView';
 import {CountdownButton} from '../view/CountdownButton'
 import { sendCode } from '../apis/mail';
+import { codeLogin, LoginResponse } from '../apis/login';
+import { router } from '@kit.ArkUI';
+import { PreferencesUtil } from '../utils/PreferencesUtil';
 
 
 @Entry
@@ -8,6 +11,7 @@ import { sendCode } from '../apis/mail';
 struct CodeLoginPage {
   @State email: string = '';
   @State code: string = '';
+  @State isLoading: boolean = false;
 
   build() {
     Column(){
@@ -19,15 +23,20 @@ struct CodeLoginPage {
       TextInput({ placeholder:'请输入邮箱' })
         .type(InputType.Email)
         .width('90%')
+        .onChange((value:string)=>{
+          this.email = value
+        })
 
       Row(){
         TextInput({placeholder:'请输入邮箱验证码'})
           .width('60%')
-
-        CountdownButton()
-          .onClick(()=>{
-              this.handleGetCode()
+          .onChange((value:string)=>{
+            this.code = value
           })
+
+        CountdownButton({
+          email:this.email
+        })
       }
       .width('90%')
       .justifyContent(FlexAlign.SpaceBetween)
@@ -41,13 +50,14 @@ struct CodeLoginPage {
         .type(ButtonType.Capsule)
         .onClick(()=>{
           console.log("登录")
+          this.handleCodeLogin()
         })
 
 
       LoadingProgress()
         .width(50)
         .height(50)
-        .visibility(Visibility.Hidden)
+        .visibility(this.isLoading ? Visibility.Visible : Visibility.Hidden)
 
       Blank()
     }
@@ -55,16 +65,27 @@ struct CodeLoginPage {
 
   }
 
-  private async handleGetCode() {
+
+  private async handleCodeLogin() {
+    this.isLoading = true;
     try {
-      const result = await sendCode<string>(this.email);
+      const result = await codeLogin<LoginResponse>({
+        email:this.email,
+        code:this.code
+      })
       if (result.code === '200') {
-        console.info("获取验证码成功");
-      } else {
-        console.info('获取验证码失败')
+        console.info("登录成功");
+        PreferencesUtil.put('token', result.data.token)
+        router.pushUrl({
+          url:'pages/MainPage'
+        })
+      }else {
+        console.info('登录失败')
       }
     } catch (error) {
-      console.error('获取验证码请求失败:', error);
+      console.error('登录请求失败:', error);
+    } finally {
+      this.isLoading = false
     }
   }
 }

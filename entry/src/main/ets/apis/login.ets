@@ -20,3 +20,16 @@ export function login<T>(data:LoginRequest){
     data
   })
 }
+
+interface CodeLoginRequest{
+  email:string,
+  code:string
+}
+
+export function codeLogin<T>(data:CodeLoginRequest){
+  return request<T>({
+    url:'/users/codeLogin',
+    method:'POST',
+    data
+  })
+}

@@ -1,3 +1,5 @@
+import { sendCode } from "../apis/mail";
+
 @Component
 export struct CountdownButton {
   @State countdown: number = 0; // 当前倒计时剩余秒数
@@ -6,6 +8,7 @@ export struct CountdownButton {
 
   @Prop text: string = '获取验证码'; // 按钮默认文字
   @Prop duration: number = 60; // 倒计时时长
+  @Prop email: string = '';
 
   private startCountdown() {
     if (this.isCounting) return; // 防止重复点击
@@ -32,7 +35,22 @@ export struct CountdownButton {
       .onClick(() => {
         if (!this.isCounting) {
           this.startCountdown();
+            this.handleGetCode()
         }
       });
+  }
+
+  private async handleGetCode() {
+    console.info('CountdownButton:handleGetCode', this.email)
+    try {
+      const result = await sendCode<string>(this.email);
+      if (result.code === '200') {
+        console.info("获取验证码成功");
+      } else {
+        console.info('获取验证码失败')
+      }
+    } catch (error) {
+      console.error('获取验证码请求失败:', error);
+    }
   }
 }

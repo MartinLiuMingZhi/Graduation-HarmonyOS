@@ -33,8 +33,8 @@ struct RegisterPage {
           })
 
         // 点击获取验证码后进入倒计时
-        CountdownButton().onClick(() => {
-          this.handleGetCode()
+        CountdownButton({
+          email: this.email
         })
       }
       .width('90%')
@@ -123,17 +123,4 @@ struct RegisterPage {
     }
   }
 
-  private async handleGetCode() {
-    try {
-      const result = await sendCode<string>(this.email);
-      if (result.code === '200') {
-        console.info("获取验证码成功");
-      } else {
-        this.errorMessage = result.msg || '获取验证码失败';
-      }
-    } catch (error) {
-      console.error('获取验证码请求失败:', error);
-      this.errorMessage = '网络请求失败，请稍后再试';
-    }
-  }
 }

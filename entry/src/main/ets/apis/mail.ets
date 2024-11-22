@@ -4,7 +4,7 @@ export function sendCode<T>(email:string){
   return request<T>({
     url:'/mail/sendCode',
     method:'GET',
-    data: email
+    params: { email }
   })
 }
 
