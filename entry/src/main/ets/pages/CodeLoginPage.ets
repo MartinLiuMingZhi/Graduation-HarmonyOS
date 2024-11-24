@@ -76,7 +76,7 @@ struct CodeLoginPage {
       if (result.code === '200') {
         console.info("登录成功");
         PreferencesUtil.put('token', result.data.token)
-        router.pushUrl({
+        router.replaceUrl({
           url:'pages/MainPage'
         })
       }else {
