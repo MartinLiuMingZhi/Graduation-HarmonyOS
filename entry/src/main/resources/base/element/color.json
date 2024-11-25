@@ -11,6 +11,10 @@
     {
       "name": "blue",
       "value": "#007DFF"
+    },
+    {
+      "name": "white_background",
+      "value": "#F1F3F5"
     }
   ]
 }
