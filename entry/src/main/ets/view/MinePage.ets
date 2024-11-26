@@ -1,5 +1,5 @@
 @Component
-export struct UserPage {
+export struct MinePage {
   @Consume('pageInfos') pageInfos: NavPathStack;
   build() {
     NavDestination() {
