@@ -1,3 +1,5 @@
+import { HomePage } from '../view/HomePage';
+
 @Entry
 @Component
 struct MainPage {
@@ -37,7 +39,7 @@ struct MainPage {
         .fontColor(this.currentIndex === targetIndex ? '#ff8ab5f5' : '#8a8a8a')
     }
     .width('100%')
-    .height(50)
+    .height(40)
     .justifyContent(FlexAlign.Center)
   }
 
@@ -45,15 +47,19 @@ struct MainPage {
     Column() {
       Tabs({ barPosition: BarPosition.End }) {
         TabContent() {
+          HomePage()
         }.tabBar(this.tabBuilder('首页', 0, $r('app.media.ic_home_select'), $r('app.media.ic_home_normal')))
 
         TabContent() {
+          Text('这是社区')
         }.tabBar(this.tabBuilder('社区', 1, $r('app.media.ic_bbs_select'), $r('app.media.ic_bbs_normal')))
 
         TabContent() {
+          Text('这是消息')
         }.tabBar(this.tabBuilder('消息', 2, $r('app.media.ic_message_select'), $r('app.media.ic_message_normal')))
 
         TabContent() {
+          Text('这是我的')
         }.tabBar(this.tabBuilder('我的', 3, $r('app.media.ic_mine_select'), $r('app.media.ic_mine_normal')))
       }
       .animationDuration(10)
@@ -61,7 +67,7 @@ struct MainPage {
       .onChange((index: number) => {
         this.currentIndex = index
       })
-      // .scrollable(false)
+      .scrollable(false)
     }
     .width('100%')
   }
