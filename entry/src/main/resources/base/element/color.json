@@ -15,6 +15,10 @@
     {
       "name": "white_background",
       "value": "#F1F3F5"
+    },
+    {
+      "name": "black",
+      "value": "#FF070707"
     }
   ]
 }

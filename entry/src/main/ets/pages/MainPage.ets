@@ -1,4 +1,5 @@
 import { HomePage } from '../view/HomePage';
+import { MinePage } from '../view/MinePage';
 
 @Entry
 @Component
@@ -59,7 +60,7 @@ struct MainPage {
         }.tabBar(this.tabBuilder('消息', 2, $r('app.media.ic_message_select'), $r('app.media.ic_message_normal')))
 
         TabContent() {
-          Text('这是我的')
+          MinePage()
         }.tabBar(this.tabBuilder('我的', 3, $r('app.media.ic_mine_select'), $r('app.media.ic_mine_normal')))
       }
       .animationDuration(10)
