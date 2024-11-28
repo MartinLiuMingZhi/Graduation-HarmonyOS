@@ -25,25 +25,7 @@ export struct CardView {
           .fontSize(14)
           .fontColor($r('app.color.light_blue'))
           .padding({ top: 10, bottom: 10,  right: 10 })
-
-        // 卡片底部
-        // Row() {
-        //   Button('Action')
-        //     .width('50%')
-        //     .height(40)
-        //     .backgroundColor(Color.Green)
-        //     .borderRadius(10)
-        //     .margin({ right: 10 })
-        //
-        //   Button('Cancel')
-        //     .width('50%')
-        //     .height(40)
-        //     .backgroundColor($r('app.color.black'))
-        //     .borderRadius(10)
-        // }
-        // .width('100%')
-        // .height('auto')
-        // .padding({ top: 10, bottom: 10, left: 10, right: 10 })
+        
       }
       .width('90%')
       .height('auto')
