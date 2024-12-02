@@ -38,6 +38,7 @@ struct MainPage {
         .size({ width: 25, height: 25 })
       Text(title)
         .fontColor(this.currentIndex === targetIndex ? '#ff8ab5f5' : '#8a8a8a')
+        .fontSize(12)
     }
     .width('100%')
     .height(40)
@@ -55,13 +56,17 @@ struct MainPage {
           Text('这是社区')
         }.tabBar(this.tabBuilder('社区', 1, $r('app.media.ic_bbs_select'), $r('app.media.ic_bbs_normal')))
 
+        TabContent(){
+          Text("这是漫游")
+        }.tabBar(this.tabBuilder('漫游', 2, $r('app.media.ic_travel_select'), $r('app.media.ic_travel_normal')))
+
         TabContent() {
           Text('这是消息')
-        }.tabBar(this.tabBuilder('消息', 2, $r('app.media.ic_message_select'), $r('app.media.ic_message_normal')))
+        }.tabBar(this.tabBuilder('消息', 3, $r('app.media.ic_message_select'), $r('app.media.ic_message_normal')))
 
         TabContent() {
           MinePage()
-        }.tabBar(this.tabBuilder('我的', 3, $r('app.media.ic_mine_select'), $r('app.media.ic_mine_normal')))
+        }.tabBar(this.tabBuilder('我的', 4, $r('app.media.ic_mine_select'), $r('app.media.ic_mine_normal')))
       }
       .animationDuration(10)
       .backgroundColor($r('app.color.white_background'))
