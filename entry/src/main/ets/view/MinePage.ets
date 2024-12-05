@@ -1,6 +1,7 @@
 import { CardView } from "./CardView"
 import { Font } from "@ohos.arkui.UIContext"
 import { SearchView } from "./SearchView"
+import { PlayerComponent } from "./PlayerComponent"
 
 @Entry
 @Component
@@ -22,15 +23,18 @@ export struct MinePage {
                left: 30
              })
 
-           List({space: 4,initialIndex:0}){
-
-           }
+           // List({space: 4,initialIndex:0}){
+           //
+           // }
          }
          .width('100%')
          .height('100%')
       }
       .scrollBar(BarState.Off)
+      .height(550)
 
+      Blank()
+      PlayerComponent()
     }
     .width('100%')
     .height('100%')

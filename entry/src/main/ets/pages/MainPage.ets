@@ -50,6 +50,7 @@ struct MainPage {
       Tabs({ barPosition: BarPosition.End }) {
         TabContent() {
           HomePage()
+
         }.tabBar(this.tabBuilder('首页', 0, $r('app.media.ic_home_select'), $r('app.media.ic_home_normal')))
 
         TabContent() {
