@@ -17,8 +17,48 @@
       "value": "#F1F3F5"
     },
     {
+      "name": "player_background",
+      "value": "#F6F9FC"
+    },
+    {
       "name": "black",
       "value": "#FF070707"
+    },
+    {
+      "name": "singer",
+      "value": "#000000"
+    },
+    {
+      "name": "song_name",
+      "value": "#000000"
+    },
+    {
+      "name": "slider_block",
+      "value": "#00FFFFFF"
+    },
+    {
+      "name": "slider_select",
+      "value": "#DBFFFFFF"
+    },
+    {
+      "name": "slider_track",
+      "value": "#33FFFFFF"
+    },
+    {
+      "name": "play_text_color",
+      "value": "#99FFFFFF"
+    },
+    {
+      "name": "singer_text",
+      "value": "#4DFFFFFF"
+    },
+    {
+      "name": "select_swiper",
+      "value": "#DBFFFFFF"
+    },
+    {
+      "name": "shadow_color",
+      "value": "#66000000"
     }
   ]
 }

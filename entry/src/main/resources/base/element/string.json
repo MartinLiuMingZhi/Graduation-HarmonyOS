@@ -11,6 +11,26 @@
     {
       "name": "EntryAbility_label",
       "value": "Graduation"
+    },
+    {
+      "name": "collect",
+      "value": "collect"
+    },
+    {
+      "name": "download",
+      "value": "download"
+    },
+    {
+      "name": "comment",
+      "value": "comment"
+    },
+    {
+      "name": "share",
+      "value": "share"
+    },
+    {
+      "name": "page_show",
+      "value": "page from npm package"
     }
   ]
 }
