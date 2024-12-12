@@ -19,6 +19,7 @@ export struct PlayListItem{
           })
           .borderRadius(10)
 
+        //向左水平对齐
         Column(){
           Text(this.PlayListName)
             .fontSize(14)
@@ -29,8 +30,6 @@ export struct PlayListItem{
             .margin({
               top: 5
             })
-            .textAlign(TextAlign.Start)
-
         }
       }
       .width('100%')

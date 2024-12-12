@@ -1,6 +1,5 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig,AxiosRequestConfig } from '@ohos/axios'
 import { PreferencesUtil } from '../utils/PreferencesUtil';
-import {TokenUtil} from '../utils/TokenUtil'
 
 interface BaseResponse<T>{
   code?:string,
