@@ -1,6 +1,7 @@
 import { Logger } from '../utils/Logger';
 import { HomePage } from '../view/HomePage';
 import { MinePage } from '../view/MinePage';
+import { PlayerComponent } from '../view/PlayerComponent';
 
 @Entry
 @Component
