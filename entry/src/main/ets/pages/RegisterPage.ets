@@ -111,7 +111,7 @@ struct RegisterPage {
       });
       console.log('Received register response:', JSON.stringify(result));
       if (result.code === '200') {
-        PreferencesUtil.put('token', result.data.token);
+        await PreferencesUtil.putAsync('token', result.data.token);
       } else {
         this.errorMessage = result.msg || '注册失败';
       }

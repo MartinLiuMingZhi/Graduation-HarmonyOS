@@ -104,7 +104,7 @@ struct LoginPage {
       console.log('Received login response:', JSON.stringify(result));
       if (result.code === '200') {
         // TokenUtil.setToken(result.data.token)
-        PreferencesUtil.put('token', result.data.token)
+        await PreferencesUtil.putAsync('token', result.data.token)
         router.replaceUrl({
           url:'pages/MainPage'
         })

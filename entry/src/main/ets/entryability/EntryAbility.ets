@@ -10,7 +10,12 @@ export default class EntryAbility extends UIAbility {
     // const appStorage = AppStorage.getInstance()
     // appStorage.setContext(this.context)
 
-    PreferencesUtil.init(this.context)
+    // Initialize PreferencesUtil
+    PreferencesUtil.init(this.context).then(() => {
+      hilog.info(0x0000, 'testTag', '%{public}s', 'PreferencesUtil initialized');
+    }).catch((error:Error) => {
+      hilog.error(0x0000, 'testTag', 'Failed to initialize PreferencesUtil: %{public}s', JSON.stringify(error));
+    });
   }
 
   onDestroy(): void {
