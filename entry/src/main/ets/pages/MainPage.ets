@@ -1,4 +1,5 @@
 import { Logger } from '../utils/Logger';
+import { CommunityView } from '../view/CommunityView';
 import { HomePage } from '../view/HomePage';
 import { MinePage } from '../view/MinePage';
 import { PlayerComponent } from '../view/PlayerComponent';
@@ -33,7 +34,7 @@ struct MainPage {
         }.tabBar(this.tabBuilder('首页', 0, $r('app.media.ic_home_select'), $r('app.media.ic_home_normal')))
 
         TabContent() {
-          Text('这是社区')
+          CommunityView()
         }.tabBar(this.tabBuilder('社区', 1, $r('app.media.ic_bbs_select'), $r('app.media.ic_bbs_normal')))
 
         TabContent(){
