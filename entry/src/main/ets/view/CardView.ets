@@ -1,4 +1,7 @@
+import { MIText } from "./MIText"
+
 @Component
+@Preview
 export struct CardView {
 
   build() {
@@ -12,7 +15,7 @@ export struct CardView {
             .borderRadius(10)
             .margin({ right: 10 , top:10, left:10 })
 
-          Text('Username')
+          Text('青春勿语')
             .fontSize(16)
             .fontWeight(FontWeight.Bold)
         }
@@ -20,12 +23,27 @@ export struct CardView {
         .height('auto')
         .padding({ top: 10, bottom: 10, left: 10, right: 10 })
 
+
         // 卡片内容
-        Text('This is a sample card with more content.')
-          .fontSize(14)
-          .fontColor($r('app.color.light_blue'))
-          .padding({ top: 10, bottom: 10,  right: 10 })
-        
+        Row({space:10}) {
+            MIText({
+              number:'1',
+              text:'好友'
+            })
+            MIText({
+              number:'2',
+              text:'关注'
+            })
+            MIText({
+              number:'3',
+              text:'动态'
+            })
+        }
+        .justifyContent(FlexAlign.Center)
+        .margin({
+          bottom:10
+        })
+
       }
       .width('90%')
       .height('auto')

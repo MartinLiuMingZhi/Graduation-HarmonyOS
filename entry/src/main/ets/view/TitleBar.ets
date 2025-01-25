@@ -15,9 +15,9 @@ export struct TitleBar {
         }
 
         Text(this.title)
-          .fontSize(18)
+          .fontSize(16)
           .fontColor('#000000') // 修改字体颜色为黑色
-          .fontWeight(FontWeight.Bold)
+          .fontWeight(FontWeight.Medium)
           .flexGrow(1)
           .textAlign(TextAlign.Center)
 

@@ -15,6 +15,10 @@ export struct DynamicItem{
         .objectFit(ImageFit.Contain)
         .width('100%')
         .height('auto')
+        .borderRadius({
+          topLeft: 5,
+          topRight: 5,
+        })
 
       Text(this.dynamic_title)
         .fontWeight(FontWeight.Bold)
@@ -69,5 +73,8 @@ export struct DynamicItem{
     }
     .width('100%')
     .height('auto')
+    .backgroundColor(Color.White)
+    .shadow(10)
+    .borderRadius(5)
   }
 }

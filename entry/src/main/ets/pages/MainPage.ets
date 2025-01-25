@@ -1,6 +1,7 @@
 import { Logger } from '../utils/Logger';
 import { CommunityView } from '../view/CommunityView';
 import { HomePage } from '../view/HomePage';
+import { MessageView } from '../view/MessageView';
 import { MinePage } from '../view/MinePage';
 import { PlayerComponent } from '../view/PlayerComponent';
 
@@ -42,7 +43,7 @@ struct MainPage {
         }.tabBar(this.tabBuilder('漫游', 2, $r('app.media.ic_travel_select'), $r('app.media.ic_travel_normal')))
 
         TabContent() {
-          Text('这是消息')
+          MessageView()
         }.tabBar(this.tabBuilder('消息', 3, $r('app.media.ic_message_select'), $r('app.media.ic_message_normal')))
 
         TabContent() {

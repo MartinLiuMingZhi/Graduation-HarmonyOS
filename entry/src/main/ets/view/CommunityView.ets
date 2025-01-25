@@ -51,9 +51,14 @@ export struct CommunityView {
 
         }
         .columnsTemplate('1fr 1fr')
-        .columnsGap(10)
-        .rowsGap(10)
-
+        .columnsGap(5)
+        .rowsGap(5)
+        .scrollBar(BarState.Off)
+        .backgroundColor($r('app.color.white_background'))
+        .margin({
+          left:5,
+          right:5
+        })
 
       }
     }
