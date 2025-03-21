@@ -2,7 +2,7 @@
   "modelVersion": "5.0.0",
   "description": "Please describe the basic information.",
   "dependencies": {
-    "@ohos/axios": "^2.2.4",
+    "@ohos/axios": "^2.2.5",
     "@ohos/svg": "^2.2.1"
   },
   "devDependencies": {

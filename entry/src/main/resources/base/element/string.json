@@ -31,6 +31,30 @@
     {
       "name": "page_show",
       "value": "page from npm package"
+    },
+    {
+      "name": "internet_permission_reason",
+      "value": "需要访问网络以发布内容"
+    },
+    {
+      "name": "camera_permission_reason",
+      "value": "需要使用相机拍摄照片"
+    },
+    {
+      "name": "read_media_permission_reason",
+      "value": "需要读取相册中的图片"
+    },
+    {
+      "name": "media_location_permission_reason",
+      "value": "显示图片/视频地理位置信息"
+    },
+    {
+      "name": "write_media_permission_reason",
+      "value": "需要保存媒体文件"
+    },
+    {
+      "name": "microphone_permission_reason",
+      "value": "麦克风权限"
     }
   ]
 }

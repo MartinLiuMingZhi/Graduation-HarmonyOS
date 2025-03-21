@@ -631,6 +631,34 @@
     {
       "name": "cover_radius_label",
       "value": "8vp"
+    },
+    {
+      "name": "list_title",
+      "value": "20"
+    },
+    {
+      "name": "list_item_title",
+      "value": "16"
+    },
+    {
+      "name": "list_item_subtitle",
+      "value": "12"
+    },
+    {
+      "name": "list_padding",
+      "value": "16"
+    },
+    {
+      "name": "list_spacing",
+      "value": "8"
+    },
+    {
+      "name": "list_item_spacing",
+      "value": "4"
+    },
+    {
+      "name":"list_radius",
+      "value": "16"
     }
   ]
 }

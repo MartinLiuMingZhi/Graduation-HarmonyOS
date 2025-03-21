@@ -18,7 +18,7 @@
     },
     {
       "name": "player_background",
-      "value": "#F6F9FC"
+      "value": "#FFDBE8F5"
     },
     {
       "name": "black",
@@ -59,6 +59,38 @@
     {
       "name": "shadow_color",
       "value": "#66000000"
+    },
+    {
+      "name": "surface",
+      "value": "#1E1E1E"
+    },
+    {
+      "name": "text_primary",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "text_secondary",
+      "value": "#A0A0A0"
+    },
+    {
+      "name": "primary",
+      "value": "#FF5722"
+    },
+    {
+      "name": "divider",
+      "value": "#333333"
+    },
+    {
+      "name": "item_active_bg",
+      "value": "#292929"
+    },
+    {
+      "name": "playing_color",
+      "value": "#27ea34"
+    },
+    {
+      "name": "item_select_background",
+      "value": "#FF424542"
     }
   ]
 }

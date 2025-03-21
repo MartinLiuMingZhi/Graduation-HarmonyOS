@@ -4,93 +4,88 @@ import {login, LoginResponse} from '../apis/api'
 import promptAction from '@ohos.promptAction'
 import { PreferencesUtil } from '../utils/PreferencesUtil';
 
+//1950753216@qq.com
+//yqq2z71314
 @Entry
 @Component
 struct LoginPage {
   @State email: string = '';
   @State password: string = '';
   @State isLoading: boolean = false;
+  @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
 
   build() {
-    Column(){
-      TopView()
+    Navigation(this.pathStack){
+      Column(){
+        TopView()
 
-      TextInput({ placeholder:'请输入邮箱' })
-        .type(InputType.Email)
-        .margin({
-          bottom:'10vh',
-          top:'20vh'
-        })
-        .width('95%')
-        .onChange((value:string)=>{
-          this.email = value
-        })
-
-
-      TextInput({ placeholder:'请输入密码' })
-        .type(InputType.Password)
-        .width('95%')
-        .onChange((value:string)=>{
-          this.password = value
-        })
-
-      Row(){
-        Text("邮箱验证码登录")
-          .fontColor($r('app.color.blue'))
-          .fontSize(14)
-          .onClick(()=>{
-            router.pushUrl({
-              url:'pages/CodeLoginPage'
-            }).then(()=>{
-              console.log("跳转成功")
-            }).catch(()=>{
-              console.log("跳转失败")
-            })
+        TextInput({ placeholder:'请输入邮箱' })
+          .type(InputType.Email)
+          .margin({
+            bottom:'10vh',
+            top:'20vh'
+          })
+          .width('95%')
+          .onChange((value:string)=>{
+            this.email = value
           })
 
 
-        Text("忘记密码")
+        TextInput({ placeholder:'请输入密码' })
+          .type(InputType.Password)
+          .width('95%')
+          .onChange((value:string)=>{
+            this.password = value
+          })
+
+        Row(){
+          Text("邮箱验证码登录")
+            .fontColor($r('app.color.blue'))
+            .fontSize(14)
+            .onClick(()=>{
+              this.pathStack.pushPathByName('CodeLoginPage',null)
+            })
+
+
+          Text("忘记密码")
+            .fontColor($r('app.color.blue'))
+            .fontSize(14)
+        }
+        .width("90%")
+        .justifyContent(FlexAlign.SpaceBetween)
+        .margin({
+          top:'10vh',
+          bottom:'50vh'
+        })
+
+        Button("登录")
+          .width("90%")
+          .type(ButtonType.Capsule)
+          .onClick(()=>{
+            this.handleLogin()
+          })
+
+        Text("注册账号")
           .fontColor($r('app.color.blue'))
           .fontSize(14)
+          .margin({
+            top:'10vh'
+          })
+          .onClick(()=>{
+            this.pathStack.replacePathByName('RegisterPage',null)
+          })
+
+        LoadingProgress()
+          .width(50)
+          .height(50)
+          .visibility(this.isLoading ? Visibility.Visible : Visibility.Hidden)
+
+        Blank()
       }
-      .width("90%")
-      .justifyContent(FlexAlign.SpaceBetween)
-      .margin({
-        top:'10vh',
-        bottom:'50vh'
-      })
-
-      Button("登录")
-        .width("90%")
-        .type(ButtonType.Capsule)
-        .onClick(()=>{
-          this.handleLogin()
-        })
-
-      Text("注册账号")
-        .fontColor($r('app.color.blue'))
-        .fontSize(14)
-        .margin({
-          top:'10vh'
-        })
-        .onClick(()=>{
-            router.pushUrl({
-              url:'pages/RegisterPage'
-            }).then(()=>{
-              console.log("跳转成功")
-            }).catch(()=>{
-              console.log("跳转失败")
-            })
-        })
-
-      LoadingProgress()
-        .width(50)
-        .height(50)
-        .visibility(this.isLoading ? Visibility.Visible : Visibility.Hidden)
-
-      Blank()
+      .width('100%')
     }
-    .width('100%')
+    .hideTitleBar(true)
+    .hideToolBar(true)
 
   }
 
@@ -105,9 +100,7 @@ struct LoginPage {
       if (result.code === '200') {
         // TokenUtil.setToken(result.data.token)
         await PreferencesUtil.putAsync('token', result.data.token)
-        router.replaceUrl({
-          url:'pages/MainPage'
-        })
+        this.pathStack.replacePathByName('MainPage',null)
       }else {
         promptAction.showToast({
           message: result.msg

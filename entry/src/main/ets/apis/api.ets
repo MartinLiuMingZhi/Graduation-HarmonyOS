@@ -1,3 +1,5 @@
 export * from './login'
 export * from './register'
 export * from './mail'
+export * from './song'
+export * from './post'

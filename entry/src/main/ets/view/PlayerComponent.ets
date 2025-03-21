@@ -3,6 +3,8 @@ import { MusicControlComponent } from "./MusicControlComponent";
 import { curves, window } from "@kit.ArkUI";
 import { Logger } from "../utils/Logger";
 import { BusinessError } from "@kit.BasicServicesKit";
+import { SongItem } from "../viewmodel/SongItem";
+import { MediaService } from "../service/MediaService";
 
 @Entry
 @Component
@@ -16,7 +18,18 @@ export struct PlayerComponent{
   @StorageLink('bottomArea') bottomArea: number = 0;
   @State componentHeight: number = 0;
   @StorageLink('deviceHeight') deviceHeight: number = 0;
+  @StorageLink('songList') songList: SongItem[] = [];
+  @StorageProp('selectIndex') selectIndex: number = 0;
+  @State imageRotate: number = 0;
+  @State isPlaylistVisible: boolean = false; // 新增状态变量，用于控制播放列表的显示与隐
 
+
+  private drawFrame: (value: displaySync.IntervalInfo) => void = (value: displaySync.IntervalInfo) => {
+    if (this.imageRotate >= 360 ) {
+      this.imageRotate = 0;
+    }
+    this.imageRotate += 1;
+  };
 
   animationFun() {
     if (this.isPlay) {
@@ -26,10 +39,28 @@ export struct PlayerComponent{
     }
   }
 
+  aboutToAppear() {
+    let range : ExpectedFrameRateRange = {
+      expected: 30,
+      min: 0,
+      max: 30
+    };
+
+    this.backDisplaySyncSlow = displaySync.create();
+    this.backDisplaySyncSlow.setExpectedFrameRateRange(range);
+    this.backDisplaySyncSlow.on('frame', this.drawFrame);
+
+    console.log('Current isShowPlay state:', this.isShowPlay);
+  }
+
+  aboutToDisappear(): void {
+    this.backDisplaySyncSlow?.off('frame', this.drawFrame);
+  }
+
   build() {
     Row(){
       Row(){
-        Image($r('app.media.song_img'))
+        Image(this.songList[this.selectIndex].label)
           .height('32vp')
           .width('32vp')
           .borderRadius('16vp')
@@ -39,11 +70,11 @@ export struct PlayerComponent{
             this.animationFun();
           })
         Column() {
-          Text('泡沫')
+          Text(this.songList[this.selectIndex].title)
             .fontColor($r('app.color.song_name'))
             .fontSize($r('app.float.song_title_sm'))
 
-          Text('邓紫棋')
+          Text(this.songList[this.selectIndex].singer)
             .fontColor($r('app.color.singer'))
             .fontSize($r('app.float.singer_title_sm'))
             .opacity($r('app.float.singer_opacity'))
@@ -53,34 +84,69 @@ export struct PlayerComponent{
       .layoutWeight(1)
       .onClick(()=>{
         this.isShowPlay = true;
+        console.log("已点击",`${this.isShowPlay}`)
       })
 
       Blank()
         .onClick(() => {
           this.isShowPlay = true;
+          console.log("已点击",`${this.isShowPlay}`)
         })
 
       Row(){
+        Image($r('app.media.ic_previous'))
+          .height($r('app.float.control_icon_height'))
+          .width($r('app.float.control_icon_width'))
+          .margin({ right: $r('app.float.control_icon_margin') })
+          .displayPriority(2)
+          .onClick(() => MediaService.getInstance().playPrevious())
+
         Image(this.isPlay?$r('app.media.ic_play'):$r('app.media.ic_pause') )
           .height('24vp')
           .width('24vp')
           .displayPriority(3)
           .onClick(()=>{
-            this.isPlay = !this.isPlay;
+            if (MediaService.getInstance().getFirst()) {
+              MediaService.getInstance().loadAssent(0);
+            } else {
+              this.isPlay ? MediaService.getInstance().pause() : MediaService.getInstance().play();
+            }
           })
+        Image($r('app.media.ic_next'))
+          .height($r('app.float.control_icon_height'))
+          .width($r('app.float.control_icon_width'))
+          .margin({
+            right: $r('app.float.control_icon_margin'),
+            left: $r('app.float.control_icon_margin')
+          })
+          .displayPriority(2)
+          .onClick(() => MediaService.getInstance().playNextAuto(true))
+
         Image($r('app.media.ic_music_list'))
           .height($r('app.float.control_icon_height'))
           .width($r('app.float.control_icon_width'))
           .displayPriority(1)
+          .onClick(() => {
+            this.isPlaylistVisible = true; // 点击图标时显示播放列表
+          })
       }
       .width($r('app.float.play_width_sm'))
       .justifyContent(FlexAlign.End)
+      .layoutWeight(1)
 
     }
     .height('48vp')
     .width('100%')
     .backgroundColor($r('app.color.player_background'))
     .bindContentCover($$this.isShowPlay, this.musicPlayBuilder(), ModalTransition.DEFAULT)
+    // .bindSheet($$this.isPlaylistVisible, this.playlistBuilder(),{
+    //   height: '80%',
+    //   dragBar: true,
+    //   onDisappear: () => {
+    //     console.log('bindSheet onDisappear, isShowPlay:', this.isShowPlay);
+    //     this.isPlaylistVisible = false; // 隐藏播放列表
+    //   },
+    // })
     .padding({
       left: $r('app.float.player_padding'),
       right: $r('app.float.player_padding')
@@ -133,6 +199,7 @@ export struct PlayerComponent{
       }).catch((error: BusinessError) => {
         Logger.error(`${error.code} + ${error.message}`)
       });
+      console.log('musicPlayBuilder onAppear');
     })
     .onDisAppear(() => {
       this.componentHeight = 0;
@@ -150,6 +217,7 @@ export struct PlayerComponent{
       }).catch((error: BusinessError) => {
         Logger.error(`${error.code} + ${error.message}`)
       });
+      console.log('musicPlayBuilder onDisAppear');
     })
     .gesture(
       PanGesture(this.panOption)
@@ -171,4 +239,92 @@ export struct PlayerComponent{
         })
     )
   }
+
+  @Builder
+  playlistBuilder() {
+    Column() {
+      Text('播放列表')
+        .fontSize(22)
+        .fontColor($r('app.color.black'))
+        .margin({
+          left: $r('app.float.player_padding'),
+          right: $r('app.float.player_padding'),
+          top: $r('app.float.player_padding')
+        })
+
+      List({space: 8}){
+        ForEach(this.songList,(song:SongItem,index:number) => {
+          ListItem(){
+            Column(){
+              Row(){
+                Row(){
+                  Text(song.title)
+                    .fontSize(18)
+                    .fontColor(this.selectIndex === index ? $r('app.color.playing_color') : $r('app.color.black'))
+                    .margin({
+                      left: $r('app.float.player_padding'),
+                      right: $r('app.float.player_padding'),
+                    })
+
+                  Text(song.singer)
+                    .fontSize(12)
+                    .fontColor(this.selectIndex === index ? $r('app.color.playing_color') : $r('app.color.black'))
+                    .opacity(this.selectIndex == index ? 1: $r('app.float.singer_opacity'))
+                }
+
+                Row(){
+                  if (this.selectIndex === index){
+                    Image($r('app.media.ic_playing'))
+                      .height($r('app.float.control_icon_height'))
+                      .width($r('app.float.control_icon_width'))
+                      .margin({
+                        right: $r('app.float.control_icon_margin'),
+                        left: $r('app.float.control_icon_margin')
+                      })
+                  }
+
+                  Image($r('app.media.ic_delete'))
+                    .height($r('app.float.control_icon_height'))
+                    .width($r('app.float.control_icon_width'))
+                    .margin({
+                      right: $r('app.float.control_icon_margin'),
+                      left: $r('app.float.control_icon_margin')
+                    })
+                    .displayPriority(1)
+                    .onClick(() => {
+                      this.songList.splice(index, 1);
+                    })
+                }
+              }
+              .width('100%')
+              .justifyContent(FlexAlign.SpaceBetween)
+
+              Divider()
+                .height(1)
+                .backgroundColor($r('app.color.divider'))
+                .margin({
+                  left: $r('app.float.player_padding'),
+                  right: $r('app.float.player_padding'),
+                })
+                .opacity($r('app.float.divider_opacity'))
+
+            }
+            .width('100%')
+            .onClick(() => {
+              this.selectIndex = index;
+              MediaService.getInstance().loadAssent(this.selectIndex)
+            })
+          }
+        })
+      }
+      .scrollBar(BarState.Off)
+      .backgroundColor(Color.White)
+      .width('100%')
+      .height('100%')
+      .margin({
+        top: 20
+      })
+    }
+  }
+
 }

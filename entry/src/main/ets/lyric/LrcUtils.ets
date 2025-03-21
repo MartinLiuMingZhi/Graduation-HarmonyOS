@@ -1,4 +1,5 @@
 import { util } from '@kit.ArkTS';
+import axios, { AxiosResponse } from '@ohos/axios';
 import { Logger } from '../utils/Logger';
 import { LrcEntry, Word } from './LrcEntry';
 
@@ -22,6 +23,31 @@ export async function getRawStringData(context: Context, rawFilePath: string): P
   let textDecoder = util.TextDecoder.create('utf-8', { ignoreBOM: true });
   let stringData = textDecoder.decodeWithStream(value, { stream: false });
   return stringData;
+}
+
+
+/**
+ * Fetch lyrics from a URL.
+ *
+ * @param url - The URL of the LRC file.
+ * @returns The lyrics as a string.
+ */
+
+export async function fetchLyricFromUrl(url: string): Promise<string> {
+  try {
+    const response: AxiosResponse<string> = await axios.get(url, {
+      responseType: 'string'
+    });
+    if (response.status !== 200) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    Logger.info('Fetch lyrics from URL:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching lyrics from URL:', error);
+    Logger.error('Error fetching lyrics from URL:', error);
+    return '';
+  }
 }
 
 /**

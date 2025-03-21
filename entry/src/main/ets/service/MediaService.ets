@@ -12,6 +12,7 @@ import { BackgroundUtil } from "../utils/BackgroudUtil";
 import { SongConstants } from "../data/SongConstants";
 import { CardData } from "../data/CardData";
 import { formBindingData, formProvider } from "@kit.FormKit";
+import { getSongList, Song } from "../apis/song";
 
 const TAG = "MediaService"
 
@@ -29,6 +30,7 @@ export class MediaService{
   private songList: SongItem[] = [];
   private formIds: string[] = [];
   private isCurrent: boolean = true;
+  private static initialized = false;
 
   private seekCall: (seekDoneTime: number) => void = (seekDoneTime: number) => {
     this.isCurrent = true;
@@ -138,14 +140,43 @@ export class MediaService{
     this.playPrevious();
   };
 
+  private static async fetchSongList(){
+    Logger.info(TAG, 'fetchSongList');
+    try {
+       const  response = await getSongList<Song[]>();
+       Logger.info(TAG,  JSON.stringify(response));
+       return response.data;
+    } catch (error) {
+      Logger.info(TAG, );
+      Logger.error(TAG, 'fetchSongList error: ', error);
+      return [];
+    }
+  }
+
+  private async loadSongList() {
+    try {
+      const songList = await MediaService.fetchSongList();
+      Logger.info(TAG, JSON.stringify(songList));
+      if (Array.isArray(songList) && songList.length > 0) {
+        this.songList = songList;
+        AppStorage.setOrCreate('songList', songList); // 持久化歌曲列表
+      }
+    } catch (error) {
+      console.error('Error loading song list:', error);
+    }
+  }
 
   constructor() {
-    let list: SongItem[] | undefined = AppStorage.get('songList');
-    if (list) {
-      this.songList = list;
+    // let list: SongItem[] | undefined = AppStorage.get('songList');
+    // if (list) {
+    //   this.songList = list;
+    // }
+    if (!MediaService.initialized) {
+      this.songItemBuilder = new SongItemBuilder();
+      this.initAudioPlayer();
+      this.loadSongList(); // 调用新方法加载歌曲列表
+      MediaService.initialized = true;
     }
-    this.songItemBuilder = new SongItemBuilder();
-    this.initAudioPlayer();
   }
 
   public static getInstance(): MediaService {

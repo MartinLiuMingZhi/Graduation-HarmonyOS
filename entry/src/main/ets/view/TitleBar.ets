@@ -1,8 +1,12 @@
 @Component
-export struct TitleBar {
+export struct  TitleBar {
   @Prop title: string ;
-  @Prop leftIcon: string | Resource;
-  @Prop rightIcon:string | Resource;
+  @Prop leftIcon: string | Resource | undefined;
+  @Prop rightIcon:string | Resource | undefined;
+
+  // 使用私有变量保存事件逻辑
+  private leftIconClick: () => void = () => {};
+  private rightIconClick: () => void = () => {};
 
   build(){
     Column(){
@@ -12,6 +16,9 @@ export struct TitleBar {
             .width(24)
             .height(24)
             .alignSelf(ItemAlign.Center) // 修改对齐方式为居中
+            .onClick(() => {
+              this.leftIconClick();
+            })
         }
 
         Text(this.title)
@@ -21,11 +28,15 @@ export struct TitleBar {
           .flexGrow(1)
           .textAlign(TextAlign.Center)
 
+        //并提供一个点击事件
         if (this.rightIcon) {
           Image(this.rightIcon)
             .width(24)
             .height(24)
             .alignSelf(ItemAlign.Center) // 修改对齐方式为居中
+            .onClick(() => {
+              this.rightIconClick();
+            })
         }
       }
       .width('100%')

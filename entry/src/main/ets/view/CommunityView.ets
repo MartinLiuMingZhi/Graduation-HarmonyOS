@@ -1,16 +1,8 @@
 import { DynamicItem } from "./DynamicItem";
 import { TitleBar } from "./TitleBar"
+import { router } from "@kit.ArkUI";
+import { DynamicDataSource, DynamicItemData } from "../data/DynamicDataSource";
 
-
-// 定义一个接口来表示 items 数组中的对象
-interface DynamicItemData {
-  dynamic_title: string;
-  dynamic_img: string;
-  dynamic_avatar: string;
-  dynamic_name: string;
-  dynamic_likes: string;
-  dynamic_like_state: boolean;
-}
 
 @Preview
 @Component
@@ -23,7 +15,28 @@ export struct CommunityView {
     dynamic_likes: `${Math.floor(Math.random() * 1000)}`,
     dynamic_like_state: Math.random() > 0.5,
   }));
+  private dataSource: DynamicDataSource = new DynamicDataSource(this.items);
 
+  @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
+
+  @State minSize: number = 80;
+  @State maxSize: number = 180;
+  private itemWidthArray: number[] = [];
+  private itemHeightArray: number[] = [];
+
+  // 计算FlowItem宽/高
+  getSize() {
+    let ret = Math.floor(Math.random() * this.maxSize);
+    return (ret > this.minSize ? ret : this.minSize);
+  }
+
+  // 设置FlowItem宽/高数组
+  setItemSizeArray() {
+    for (let i = 0; i < 100; i++) {
+      this.itemWidthArray.push(this.getSize());
+      this.itemHeightArray.push(this.getSize());
+    }
+  }
 
 
   build() {
@@ -32,33 +45,38 @@ export struct CommunityView {
           TitleBar({
             title: '社区',
             leftIcon: $r('app.media.ic_vip'),
-            rightIcon: $r('app.media.ic_add')
+            rightIcon: $r('app.media.ic_add'),
+            rightIconClick: () => {
+              this.pathStack.pushPathByName('PostEditorPage',null)
+              console.log('点击了添加按钮')
+            }
           })
 
-        Grid(){
-          ForEach(this.items, (item: DynamicItemData, index: number) => {
-            GridItem() {
-              DynamicItem({
-                dynamic_title: item.dynamic_title,
-                dynamic_img: item.dynamic_img,
-                dynamic_avatar: item.dynamic_avatar,
-                dynamic_name: item.dynamic_name,
-                dynamic_likes: item.dynamic_likes,
-                dynamic_like_state: item.dynamic_like_state
-              })
-            }
-          }, (item: DynamicItemData, index: number): string => index.toString()) // 将 index 转为 string 类型
-
-        }
-        .columnsTemplate('1fr 1fr')
-        .columnsGap(5)
-        .rowsGap(5)
-        .scrollBar(BarState.Off)
-        .backgroundColor($r('app.color.white_background'))
-        .margin({
-          left:5,
-          right:5
-        })
+          WaterFlow(){
+            // 使用LazyForEach需要实现IDataSource接口
+            LazyForEach(this.dataSource, (item: DynamicItemData,index:number) => {
+              FlowItem(){
+                DynamicItem({
+                  dynamic_title: item.dynamic_title,
+                  dynamic_img: item.dynamic_img,
+                  dynamic_avatar: item.dynamic_avatar,
+                  dynamic_name: item.dynamic_name,
+                  dynamic_likes: item.dynamic_likes,
+                  dynamic_like_state: item.dynamic_like_state
+                })
+              }
+              // 瀑布流项目样式
+              .width('100%')
+              .height(this.itemHeightArray[index % 100])
+              .margin({ bottom: 10 })
+            }, (item: DynamicItemData,index:number) => index.toString())
+          }
+          .columnsTemplate('1fr 1fr')
+          .columnsGap(5)
+          .rowsGap(10)
+          .scrollBar(BarState.Off)
+          .backgroundColor($r('app.color.white_background'))
+          .margin({ left: 5, right: 5 })
 
       }
     }

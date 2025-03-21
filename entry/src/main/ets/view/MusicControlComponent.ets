@@ -1,3 +1,4 @@
+import { SongItem } from "../viewmodel/SongItem";
 import { LyricsComponent } from "./LyricsComponent";
 import { MusicInfoComponent } from "./MusicInfoComponent";
 import { TopAreaComponent } from "./TopAreaComponent";
@@ -5,14 +6,19 @@ import { TopAreaComponent } from "./TopAreaComponent";
 @Preview
 @Component
 export struct MusicControlComponent{
-
+  @StorageLink('songList') songList: SongItem[] = [];
+  @StorageProp('selectIndex') selectIndex: number = 0;
   @State isShowPlay:boolean = false;
   @StorageLink('topArea') topArea: number = 0;
   @StorageLink('bottomArea') bottomArea: number = 0;
+  @State imageLabel: string = this.songList[this.selectIndex].label;
+  @StorageLink('pageShowTime') pageShowTime: number = 0;
+  @State isShowControl: boolean = true;
+  @State intervalID: number = 0;
 
   build() {
     Stack() {
-      Image($r('app.media.song_img'))
+      Image(this.songList[this.selectIndex].label)
         .size({
           height: '120%'
         })
@@ -32,7 +38,7 @@ export struct MusicControlComponent{
                 left: $r('app.float.common_padding'),
                 right: $r('app.float.common_padding')
               })
-            LyricsComponent()
+            LyricsComponent({isShowControl: this.isShowControl})
               .margin({
                 top: $r('app.float.margin_lyric')
               })
@@ -50,6 +56,21 @@ export struct MusicControlComponent{
           )
           .clip(false)
           .loop(false)
+          .onChange((index: number) => {
+            if (index === 1) {
+              this.isShowControl = true;
+              this.intervalID = setInterval(() => {
+                this.pageShowTime += 1;
+                if (this.pageShowTime > 5) {
+                  this.isShowControl = false;
+                  clearInterval(this.intervalID);
+                }
+              }, 1000);
+            } else {
+              this.pageShowTime = 0;
+              clearInterval(this.intervalID);
+            }
+          })
 
           TopAreaComponent({ isShowPlay: this.isShowPlay })
             .padding({

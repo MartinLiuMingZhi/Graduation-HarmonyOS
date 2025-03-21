@@ -1,14 +1,18 @@
+import { SongItem } from "../viewmodel/SongItem";
 import { ControlAreaComponent } from "./ControlAreaComponent"
 
+@Preview
 @Component
 export struct MusicInfoComponent{
+  @StorageLink('songList') songList: SongItem[] = [];
+  @StorageProp('selectIndex') selectIndex: number = 0;
 
   build() {
     Column() {
       this.CoverInfo()
       this.MusicInfo()
       Blank()
-         ControlAreaComponent()
+      ControlAreaComponent()
     }
     .height('100%')
     .width('100%')
@@ -18,7 +22,7 @@ export struct MusicInfoComponent{
   @Builder
   CoverInfo() {
     Row() {
-      Image($r('app.media.song_img'))
+      Image(this.songList[this.selectIndex].label)
         .width('100%')
         .aspectRatio(1)
         .borderRadius($r('app.float.cover_radius_label'))
@@ -36,7 +40,7 @@ export struct MusicInfoComponent{
   MusicInfo() {
     Column() {
       Flex({ justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Center }) {
-        Text('泡沫')
+        Text(this.songList[this.selectIndex].title)
           .fontSize($r('app.float.title_font_play'))
           .fontColor(Color.White)
           .opacity(0.86)
@@ -50,7 +54,7 @@ export struct MusicInfoComponent{
         //   .opacity(0.86)
       }
 
-      Text('邓紫棋G.E.M')
+      Text(this.songList[this.selectIndex].singer)
         .textAlign(TextAlign.Start)
         .fontSize($r('app.float.font_fourteen') )
         .fontColor($r('app.color.play_text_color'))

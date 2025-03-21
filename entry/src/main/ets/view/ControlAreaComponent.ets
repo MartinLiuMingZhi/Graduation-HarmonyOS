@@ -1,3 +1,5 @@
+import { MediaService } from "../service/MediaService";
+
 @Component
 export struct ControlAreaComponent{
   @StorageLink('isPlay') isPlay: boolean = false;
@@ -38,7 +40,7 @@ export struct ControlAreaComponent{
           })
           .onChange((value: number, mode: SliderChangeMode) => {
             if (mode === SliderChangeMode.End || mode === SliderChangeMode.Begin) {
-              // MediaService.getInstance().seek(value);
+              MediaService.getInstance().seek(value);
             }
             this.pageShowTime = 0;
           })
@@ -73,7 +75,7 @@ export struct ControlAreaComponent{
           .controlImageBuilder()
           .width($r('app.float.control_width'))
           .onClick(() => {
-            // MediaService.getInstance().playPrevious();
+            MediaService.getInstance().playPrevious();
             this.pageShowTime = 0;
           })
         Image(this.isPlay ? $r('app.media.ic_public_play') :  $r('app.media.ic_public_pause'))
@@ -81,13 +83,13 @@ export struct ControlAreaComponent{
           .width($r('app.float.image_play_width'))
           .onClick(() => {
             if (this.isPlay) {
-              // MediaService.getInstance().pause();
+              MediaService.getInstance().pause();
             } else {
-              // if (MediaService.getInstance().getFirst()) {
-              //   MediaService.getInstance().loadAssent(0);
-              // } else {
-              //   MediaService.getInstance().play();
-              // }
+              if (MediaService.getInstance().getFirst()) {
+                MediaService.getInstance().loadAssent(0);
+              } else {
+                MediaService.getInstance().play();
+              }
             }
             this.pageShowTime = 0;
           })
@@ -95,7 +97,7 @@ export struct ControlAreaComponent{
           .controlImageBuilder()
           .width($r('app.float.control_width'))
           .onClick(() => {
-            // MediaService.getInstance().playNextAuto(true);
+            MediaService.getInstance().playNextAuto(true);
             this.pageShowTime = 0;
           })
       }
