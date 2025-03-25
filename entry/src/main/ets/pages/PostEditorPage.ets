@@ -1,4 +1,3 @@
-import picker from '@ohos.file.picker';
 import { upload } from '../apis/file';
 import { createPost } from '../apis/post';
 import { promptAction } from '@kit.ArkUI';

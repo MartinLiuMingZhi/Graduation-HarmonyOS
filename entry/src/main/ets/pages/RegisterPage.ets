@@ -2,12 +2,10 @@ import { register, RegisterResponse, sendCode } from '../apis/api';
 import { PreferencesUtil } from '../utils/PreferencesUtil';
 import { TopView } from '../view/TopView';
 import {CountdownButton} from '../view/CountdownButton';
+import { router } from '@kit.ArkUI';
 
-@Builder
-export function RegisterPageBuilder() {
-  RegisterPage()
-}
 
+@Entry
 @Component
 struct RegisterPage {
   @State email: string = '';
@@ -16,74 +14,71 @@ struct RegisterPage {
   @State checkPassword: string = '';
   @State isLoading: boolean = false;
   @State errorMessage: string = '';
-  @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
 
   build() {
-    NavDestination(){
-      Column() {
-        TopView()
-          .margin({ bottom: '20vh' })
+    Column() {
+      TopView()
+        .margin({ bottom: '20vh' })
 
-        TextInput({ placeholder: '请输入邮箱地址' })
-          .type(InputType.Email)
-          .width('90%')
-          .onChange((value: string) => {
-            this.email = value
-          })
-
-        Row() {
-          TextInput({ placeholder: '请输入邮箱验证码' })
-            .width('60%')
-            .onChange((value: string) => {
-              this.code = value
-            })
-
-          // 点击获取验证码后进入倒计时
-          CountdownButton({
-            email: this.email
-          })
-        }
+      TextInput({ placeholder: '请输入邮箱地址' })
+        .type(InputType.Email)
         .width('90%')
-        .justifyContent(FlexAlign.SpaceBetween)
-        .margin({ top: '10vh' })
+        .onChange((value: string) => {
+          this.email = value
+        })
 
-        TextInput({ placeholder: '请输入密码' })
-          .type(InputType.Password)
-          .width('90%')
-          .margin({ top: '10vh', bottom: '10vh' })
+      Row() {
+        TextInput({ placeholder: '请输入邮箱验证码' })
+          .width('60%')
           .onChange((value: string) => {
-            this.password = value
+            this.code = value
           })
 
-        TextInput({ placeholder: '请确认密码' })
-          .type(InputType.Password)
-          .width('90%')
-          .onChange((value: string) => {
-            this.checkPassword = value
-          })
-
-        Text(this.errorMessage)
-          .fontColor(Color.Red)
-          .margin({ top: '5vh' })
-
-        Button('注册')
-          .width('90%')
-          .type(ButtonType.Capsule)
-          .margin({ top: '50vh' })
-          .onClick(() => {
-            console.log('注册')
-            this.handleRegister()
-          })
-
-        LoadingProgress()
-          .width(50)
-          .height(50)
-          .visibility(this.isLoading ? Visibility.Visible : Visibility.Hidden)
-
-        Blank()
+        // 点击获取验证码后进入倒计时
+        CountdownButton({
+          email: this.email
+        })
       }
-      .width('100%')
+      .width('90%')
+      .justifyContent(FlexAlign.SpaceBetween)
+      .margin({ top: '10vh' })
+
+      TextInput({ placeholder: '请输入密码' })
+        .type(InputType.Password)
+        .width('90%')
+        .margin({ top: '10vh', bottom: '10vh' })
+        .onChange((value: string) => {
+          this.password = value
+        })
+
+      TextInput({ placeholder: '请确认密码' })
+        .type(InputType.Password)
+        .width('90%')
+        .onChange((value: string) => {
+          this.checkPassword = value
+        })
+
+      Text(this.errorMessage)
+        .fontColor(Color.Red)
+        .margin({ top: '5vh' })
+
+      Button('注册')
+        .width('90%')
+        .type(ButtonType.Capsule)
+        .margin({ top: '50vh' })
+        .onClick(() => {
+          console.log('注册')
+          this.handleRegister()
+        })
+
+      LoadingProgress()
+        .width(50)
+        .height(50)
+        .visibility(this.isLoading ? Visibility.Visible : Visibility.Hidden)
+
+      Blank()
     }
+    .width('100%')
   }
 
   private async handleRegister() {
@@ -119,7 +114,12 @@ struct RegisterPage {
       console.log('Received register response:', JSON.stringify(result));
       if (result.code === '200') {
         await PreferencesUtil.putAsync('token', result.data.token);
-        this.pathStack.replacePathByName('MainPage', null);
+        // 计算并存储 Token 过期时间（当前时间加上一天）
+        const currentTime = new Date().getTime();
+        const oneDayInMillis = 24 * 60 * 60 * 1000; // 一天的毫秒数
+        const expirationTime = currentTime + oneDayInMillis;
+        await PreferencesUtil.putAsync('tokenExpiration', expirationTime.toString());
+        router.replaceUrl({ url: 'pages/MainPage' })
       } else {
         this.errorMessage = result.msg || '注册失败';
       }

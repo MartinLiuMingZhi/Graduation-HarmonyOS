@@ -6,16 +6,13 @@ import { MessageView } from '../view/MessageView';
 import { MinePage } from '../view/MinePage';
 import { PlayerComponent } from '../view/PlayerComponent';
 
-@Builder
-export function  MainPageBuilder(){
-  MainPage()
-}
-
+@Entry
 @Component
 export struct MainPage {
   @State currentIndex: number = 0;
   @StorageLink('isShowPlay') isShowPlay: boolean = false;
   private isInitialized = false;
+  @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
 
 
   // 标签栏构建器
@@ -46,7 +43,7 @@ export struct MainPage {
   }
 
   build() {
-    NavDestination(){
+    Navigation(this.pathStack){
       Tabs({ barPosition: BarPosition.End }) {
         TabContent() {
           HomePage()
@@ -82,5 +79,6 @@ export struct MainPage {
       .scrollable(false)
     }
     .hideTitleBar(true)
+    .hideToolBar(true)
   }
 }
