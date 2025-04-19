@@ -6,7 +6,6 @@ import { BusinessError } from "@kit.BasicServicesKit";
 import { SongItem } from "../viewmodel/SongItem";
 import { MediaService } from "../service/MediaService";
 
-@Entry
 @Component
 export struct PlayerComponent{
 
@@ -60,21 +59,23 @@ export struct PlayerComponent{
   build() {
     Row(){
       Row(){
-        Image(this.songList[this.selectIndex].label)
+        Image(this.songList[this.selectIndex]?.label || $r('app.media.ic_default_cover'))
           .height('32vp')
           .width('32vp')
           .borderRadius('16vp')
           .margin({right:'12vp'})
           .rotate({angle:0})
           .onAppear(()=>{
-            this.animationFun();
+            if (this.songList.length > 0) { // (2) 增加数组长度校验
+              this.animationFun();
+            }
           })
         Column() {
-          Text(this.songList[this.selectIndex].title)
+          Text(this.songList[this.selectIndex]?.title ?? '未知标题')
             .fontColor($r('app.color.song_name'))
             .fontSize($r('app.float.song_title_sm'))
 
-          Text(this.songList[this.selectIndex].singer)
+          Text(this.songList[this.selectIndex]?.singer ?? '未知歌手')
             .fontColor($r('app.color.singer'))
             .fontSize($r('app.float.singer_title_sm'))
             .opacity($r('app.float.singer_opacity'))
@@ -82,16 +83,8 @@ export struct PlayerComponent{
         .alignItems(HorizontalAlign.Start)
       }
       .layoutWeight(1)
-      .onClick(()=>{
-        this.isShowPlay = true;
-        console.log("已点击",`${this.isShowPlay}`)
-      })
 
       Blank()
-        .onClick(() => {
-          this.isShowPlay = true;
-          console.log("已点击",`${this.isShowPlay}`)
-        })
 
       Row(){
         Image($r('app.media.ic_previous'))
@@ -127,7 +120,18 @@ export struct PlayerComponent{
           .width($r('app.float.control_icon_width'))
           .displayPriority(1)
           .onClick(() => {
+            this.isShowPlay = false; // 隐藏音乐控制模态框
             this.isPlaylistVisible = true; // 点击图标时显示播放列表
+            console.log('isPlaylistVisible:', this.isPlaylistVisible);
+            console.log("isShowPlay",`${this.isShowPlay}`)
+          })
+          .bindSheet($$this.isPlaylistVisible, this.playlistBuilder(),{
+            height: '80%',
+            dragBar: true,
+            onDisappear: () => {
+              console.log('bindSheet onDisappear, isShowPlay:', this.isShowPlay);
+              this.isPlaylistVisible = false; // 隐藏播放列表
+            },
           })
       }
       .width($r('app.float.play_width_sm'))
@@ -137,16 +141,14 @@ export struct PlayerComponent{
     }
     .height('48vp')
     .width('100%')
+    .onClick(()=>{
+      this.isPlaylistVisible = false; // 隐藏播放列表模态框
+      this.isShowPlay = true;
+      console.log("isShowPlay",`${this.isShowPlay}`)
+      console.log("isPlaylistVisible", this.isPlaylistVisible)
+    })
     .backgroundColor($r('app.color.player_background'))
     .bindContentCover($$this.isShowPlay, this.musicPlayBuilder(), ModalTransition.DEFAULT)
-    // .bindSheet($$this.isPlaylistVisible, this.playlistBuilder(),{
-    //   height: '80%',
-    //   dragBar: true,
-    //   onDisappear: () => {
-    //     console.log('bindSheet onDisappear, isShowPlay:', this.isShowPlay);
-    //     this.isPlaylistVisible = false; // 隐藏播放列表
-    //   },
-    // })
     .padding({
       left: $r('app.float.player_padding'),
       right: $r('app.float.player_padding')
@@ -163,6 +165,7 @@ export struct PlayerComponent{
       PanGesture(this.panOption)
         .onActionEnd((event?: GestureEvent) => {
           if (event && event.offsetY < -10) {
+            this.isPlaylistVisible = false; // 隐藏播放列表模态框
             this.isShowPlay = true;
           }
         })

@@ -1,3 +1,5 @@
+import { NationalPage } from "../pages/home/NationalPage"
+
 @Component
 export struct HomePage {
 
@@ -8,7 +10,7 @@ export struct HomePage {
 
         }.tabBar('推荐')
         TabContent() {
-
+            NationalPage()
         }.tabBar('国风')
         TabContent() {
 

@@ -48,7 +48,6 @@ export struct CommunityView {
             rightIcon: $r('app.media.ic_add'),
             rightIconClick: () => {
               this.pathStack.pushPathByName('PostEditorPage',null)
-              console.log('点击了添加按钮')
             }
           })
 

@@ -3,6 +3,7 @@ import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { PreferencesUtil } from '../utils/PreferencesUtil';
 import { requestPermissions } from '../service/PermissionService';
+import { MediaService } from '../service/MediaService';
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
@@ -17,6 +18,12 @@ export default class EntryAbility extends UIAbility {
     }).catch((error:Error) => {
       hilog.error(0x0000, 'testTag', 'Failed to initialize PreferencesUtil: %{public}s', JSON.stringify(error));
     });
+
+    try {
+       const mediaService = MediaService.getInstance();
+    }catch (e) {
+      hilog.error(0x0000, 'testTag', 'Failed to initialize MediaService: %{public}s', JSON.stringify(e));
+    }
   }
 
   onDestroy(): void {

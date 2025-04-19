@@ -105,8 +105,6 @@ export struct MinePage {
       .scrollBar(BarState.Off)
       .height(550)
 
-      Blank()
-      PlayerComponent()
     }
     .width('100%')
     .height('100%')

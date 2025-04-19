@@ -153,7 +153,7 @@ export class MediaService{
     }
   }
 
-  private async loadSongList() {
+  async loadSongList() {
     try {
       const songList = await MediaService.fetchSongList();
       Logger.info(TAG, JSON.stringify(songList));

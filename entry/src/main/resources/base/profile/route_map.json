@@ -7,6 +7,22 @@
       "data": {
         "description" : "PostEditorPage"
       }
+    },
+    {
+      "name": "AddFriendView",
+      "pageSourceFile": "src/main/ets/view/AddFriendView.ets",
+      "buildFunction": "AddFriendViewBuilder",
+      "data": {
+        "description" : "AddFriendView"
+      }
+    },
+    {
+      "name": "CreateGroupChatView",
+      "pageSourceFile": "src/main/ets/view/CreateGroupChatView.ets",
+      "buildFunction": "CreateGroupChatViewBuilder",
+      "data": {
+        "description" : "CreateGroupChatView"
+      }
     }
 
   ]

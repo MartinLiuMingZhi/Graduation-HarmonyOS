@@ -1,4 +1,5 @@
 @Component
+@Preview
 export struct MIText{
   @Prop number: string  ;
   @Prop text: string;

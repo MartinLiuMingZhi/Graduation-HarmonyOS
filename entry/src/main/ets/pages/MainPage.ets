@@ -11,7 +11,6 @@ import { PlayerComponent } from '../view/PlayerComponent';
 export struct MainPage {
   @State currentIndex: number = 0;
   @StorageLink('isShowPlay') isShowPlay: boolean = false;
-  private isInitialized = false;
   @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
 
 
@@ -29,41 +28,64 @@ export struct MainPage {
     .justifyContent(FlexAlign.Center)
   }
 
-  aboutToAppear() {
-    if (!this.isInitialized) {
-      this.initializeMediaService();
-      this.isInitialized = true;
-    }
-  }
-
-  private async initializeMediaService() {
-    const mediaService = MediaService.getInstance();
-    // 如果有异步初始化逻辑，可以在这里等待它完成
-    // 例如 await mediaService.loadSongList();
-  }
-
   build() {
     Navigation(this.pathStack){
       Tabs({ barPosition: BarPosition.End }) {
         TabContent() {
-          HomePage()
+          Column() {
+            HomePage()
+              .padding({ bottom: 48 })
+            PlayerComponent()
+          }
         }.tabBar(this.tabBuilder('首页', 0, $r('app.media.ic_home_select'), $r('app.media.ic_home_normal')))
 
         TabContent() {
-          CommunityView()
-            .padding({ bottom: 40 }) // 给 CommunityView 添加底部内边距
+          Column(){
+            CommunityView()
+              .padding({ bottom: 88 }) // 给 CommunityView 添加底部内边距
+              PlayerComponent()
+          }
         }.tabBar(this.tabBuilder('社区', 1, $r('app.media.ic_bbs_select'), $r('app.media.ic_bbs_normal')))
 
         TabContent() {
+          // 点击漫游时显示之前的界面
+          if (this.currentIndex === 0) {
+            Column() {
+              HomePage()
+                .padding({ bottom: 48 });
+              PlayerComponent();
+            }
+          } else if (this.currentIndex === 1) {
+            Column() {
+              CommunityView()
+                .padding({ bottom: 88 });
+              PlayerComponent();
+            }
+          } else if (this.currentIndex === 3) {
+            Column() {
+              MessageView()
+                .padding({ bottom: 48 });
+            }
+          } else if (this.currentIndex === 4) {
+            Column() {
+              MinePage()
+                .padding({ bottom: 48 });
+              PlayerComponent();
+            }
+          }
         }.tabBar(this.tabBuilder('漫游', 2, $r('app.media.ic_travel_select'), $r('app.media.ic_travel_normal')))
 
         TabContent() {
           MessageView()
-            .padding({ bottom: 40 }) // 给 MessageView 添加底部内边距
+            .padding({ bottom: 48 })
         }.tabBar(this.tabBuilder('消息', 3, $r('app.media.ic_message_select'), $r('app.media.ic_message_normal')))
 
         TabContent() {
-          MinePage()
+          Column(){
+            MinePage()
+              .padding({ bottom: 48 }) // 给 MinePage 添加底部内边距
+              PlayerComponent()
+          }
         }.tabBar(this.tabBuilder('我的', 4, $r('app.media.ic_mine_select'), $r('app.media.ic_mine_normal')))
       }
       .animationDuration(10)

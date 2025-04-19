@@ -5,8 +5,8 @@ export struct  TitleBar {
   @Prop rightIcon:string | Resource | undefined;
 
   // 使用私有变量保存事件逻辑
-  private leftIconClick: () => void = () => {};
-  private rightIconClick: () => void = () => {};
+  private leftIconClick?: () => void;
+  private rightIconClick?: () => void;
 
   build(){
     Column(){
@@ -17,7 +17,9 @@ export struct  TitleBar {
             .height(24)
             .alignSelf(ItemAlign.Center) // 修改对齐方式为居中
             .onClick(() => {
-              this.leftIconClick();
+              if (this.leftIconClick) {
+                this.leftIconClick();
+              }
             })
         }
 
@@ -35,7 +37,9 @@ export struct  TitleBar {
             .height(24)
             .alignSelf(ItemAlign.Center) // 修改对齐方式为居中
             .onClick(() => {
-              this.rightIconClick();
+              if (this.rightIconClick) {
+                 this.rightIconClick();
+              }
             })
         }
       }

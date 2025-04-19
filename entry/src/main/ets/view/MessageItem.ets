@@ -9,9 +9,9 @@ export struct MessageItem {
    build() {
      Row(){
        Image(this.img)
-         .width(30)
-         .height(30)
-         .borderRadius(15)
+         .width(40)
+         .height(40)
+         .borderRadius(20)
          .margin({
            right: 10
          })
@@ -23,7 +23,7 @@ export struct MessageItem {
              .fontWeight(FontWeight.Normal)
 
            Text(this.time)
-             .fontSize(8)
+             .fontSize(10)
              .fontColor(Color.Gray)
              .margin({
                right:10
@@ -37,7 +37,7 @@ export struct MessageItem {
 
          Text(this.content)
            .width('80%')
-           .fontSize(8)
+           .fontSize(10)
            .fontColor(Color.Gray)
            .textOverflow({ overflow: TextOverflow.Ellipsis })
            .maxLines(1)
