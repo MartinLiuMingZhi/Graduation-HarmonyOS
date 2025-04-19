@@ -14,8 +14,8 @@ export struct FriendItem{
           .height(50)
           .borderRadius(25)
           .margin({
-            left: 20,
-            right: 20
+            left: 10,
+            right: 10
           })
         Text(this.name)
           .fontSize(16)
@@ -24,23 +24,25 @@ export struct FriendItem{
       .justifyContent(FlexAlign.Start)
 
       Row(){
-        Button(this.operation,{type:ButtonType.Normal,stateEffect:true})
+        Button(this.operation,{type:ButtonType.Normal})
+          .fontSize(14)
           .borderRadius(10)
-          .backgroundColor(Color.White)
-          .width(100)
-          .height(40)
+          .backgroundColor('#ffa09a9a')
+          .width(80)
+          .height(30)
 
         Image($r('app.media.ic_more2'))
           .width(20)
           .height(20)
           .margin({
-            left: 20,
+            left: 10,
             right: 20
           })
       }
       .justifyContent(FlexAlign.End)
     }
+    .justifyContent(FlexAlign.SpaceBetween)
     .width('100%')
-    .height(250)
+    .height(60)
   }
 }
