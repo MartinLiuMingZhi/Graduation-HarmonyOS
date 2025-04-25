@@ -1,11 +1,10 @@
-import { UserDTO } from "../apis/user"
+import { FriendRequestResponse } from "../apis/user"
 
 @Preview
 @Component
-export struct FriendItem{
-  @Prop item: UserDTO
-  @State operation: string = '发私信'
-  @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
+export struct FriendRequestItem{
+  @Prop item:FriendRequestResponse
+  private onCustomClick?: () => void
 
   build() {
     Row() {
@@ -25,22 +24,20 @@ export struct FriendItem{
       .justifyContent(FlexAlign.Start)
 
       Row(){
-        Button(this.operation,{type:ButtonType.Normal})
+        Button(this.item.status === false ? '添加':'已添加',{type:ButtonType.Normal})
           .fontSize(14)
           .borderRadius(10)
-          .backgroundColor('#ffa09a9a')
+          .backgroundColor(this.item.status === false ? Color.Red : Color.Gray)
           .width(80)
           .height(30)
-          .onClick(() => {
-            this.pathStack.pushPathByName('ChatView',this.item)
-          })
-
-        Image($r('app.media.ic_more2'))
-          .width(20)
-          .height(20)
           .margin({
-            left: 10,
             right: 20
+          })
+          .enabled(this.item.status === false ? true : false)
+          .onClick(()=>{
+            if (this.onCustomClick) {
+                this.onCustomClick()
+            }
           })
       }
       .justifyContent(FlexAlign.End)

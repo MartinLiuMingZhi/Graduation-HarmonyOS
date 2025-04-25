@@ -1,4 +1,6 @@
+import { FriendRequestView } from "./FriendRequestView"
 import { FriendView } from "./FriendView"
+import { NewFriendView } from "./NewFriendView"
 
 @Builder
 export function AddFriendViewBuilder() {
@@ -18,11 +20,11 @@ export struct AddFriendView{
           }.tabBar('朋友')
 
           TabContent() {
-            Text('添加朋友')
+            FriendRequestView()
           }.tabBar('添加朋友')
 
           TabContent() {
-            Text('新朋友')
+            NewFriendView()
           }.tabBar('新朋友')
 
         }

@@ -4,6 +4,7 @@ import { sendCode } from '../apis/mail';
 import { codeLogin, LoginResponse } from '../apis/login';
 import { router } from '@kit.ArkUI';
 import { PreferencesUtil } from '../utils/PreferencesUtil';
+import { MediaService } from '../service/MediaService';
 
 @Entry
 @Component
@@ -80,6 +81,9 @@ struct CodeLoginPage {
         const oneDayInMillis = 24 * 60 * 60 * 1000; // 一天的毫秒数
         const expirationTime = currentTime + oneDayInMillis;
         await PreferencesUtil.putAsync('tokenExpiration', expirationTime.toString());
+
+        MediaService.getInstance()
+
         router.replaceUrl({ url: 'pages/MainPage'})
       }else {
         console.info('登录失败')

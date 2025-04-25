@@ -18,12 +18,6 @@ export default class EntryAbility extends UIAbility {
     }).catch((error:Error) => {
       hilog.error(0x0000, 'testTag', 'Failed to initialize PreferencesUtil: %{public}s', JSON.stringify(error));
     });
-
-    try {
-       const mediaService = MediaService.getInstance();
-    }catch (e) {
-      hilog.error(0x0000, 'testTag', 'Failed to initialize MediaService: %{public}s', JSON.stringify(e));
-    }
   }
 
   onDestroy(): void {

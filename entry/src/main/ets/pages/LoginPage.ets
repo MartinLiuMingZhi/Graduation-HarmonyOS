@@ -3,6 +3,7 @@ import { TopView } from '../view/TopView';
 import {login, LoginResponse} from '../apis/api'
 import promptAction from '@ohos.promptAction'
 import { PreferencesUtil } from '../utils/PreferencesUtil';
+import { MediaService } from '../service/MediaService';
 
 @Entry
 @Component
@@ -98,6 +99,9 @@ struct LoginPage {
         const oneDayInMillis = 24 * 60 * 60 * 1000; // 一天的毫秒数
         const expirationTime = currentTime + oneDayInMillis;
         await PreferencesUtil.putAsync('tokenExpiration', expirationTime.toString());
+
+        //初始化MediaService
+        MediaService.getInstance();
         router.replaceUrl({ url: 'pages/MainPage' })
       }else {
         promptAction.showToast({

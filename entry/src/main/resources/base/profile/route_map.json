@@ -23,6 +23,22 @@
       "data": {
         "description" : "CreateGroupChatView"
       }
+    },
+    {
+      "name": "ScanBarCodePage",
+      "pageSourceFile": "src/main/ets/pages/ScanBarCodePage.ets",
+      "buildFunction": "ScanBarCodePageBuilder",
+      "data": {
+        "description" : "ScanBarCodePage"
+      }
+    },
+    {
+      "name": "ChatView",
+      "pageSourceFile": "src/main/ets/view/ChatView.ets",
+      "buildFunction": "ChatViewBuilder",
+      "data": {
+        "description" : "ChatView"
+      }
     }
 
   ]

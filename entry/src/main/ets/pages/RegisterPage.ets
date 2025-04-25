@@ -3,6 +3,7 @@ import { PreferencesUtil } from '../utils/PreferencesUtil';
 import { TopView } from '../view/TopView';
 import {CountdownButton} from '../view/CountdownButton';
 import { router } from '@kit.ArkUI';
+import { MediaService } from '../service/MediaService';
 
 
 @Entry
@@ -119,6 +120,9 @@ struct RegisterPage {
         const oneDayInMillis = 24 * 60 * 60 * 1000; // 一天的毫秒数
         const expirationTime = currentTime + oneDayInMillis;
         await PreferencesUtil.putAsync('tokenExpiration', expirationTime.toString());
+
+        MediaService.getInstance()
+
         router.replaceUrl({ url: 'pages/MainPage' })
       } else {
         this.errorMessage = result.msg || '注册失败';

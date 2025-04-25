@@ -161,8 +161,8 @@ export struct MessageView {
     // 根据选择执行不同操作
     switch (value) {
       case '添加好友':
-        this.pathStack.pushPathByName('AddFriendView',null)
         // 跳转到添加好友页面
+        this.pathStack.pushPathByName('AddFriendView',null)
         break;
       case '创建群聊':
         this.pathStack.pushPathByName('CreateGroupChatView',null)
@@ -170,6 +170,7 @@ export struct MessageView {
         break;
       case '扫一扫':
         // 调用扫码功能
+        this.pathStack.pushPathByName('ScanBarCodePage',null)
         break;
     }
   }

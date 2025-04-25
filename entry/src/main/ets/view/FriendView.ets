@@ -1,8 +1,27 @@
+import { Page } from "../apis/BaseResponse"
+import { getFriendList } from "../apis/friend"
+import { UserDTO } from "../apis/user"
 import { FriendItem } from "./FriendItem"
 
 @Component
 export struct FriendView{
-  @State friend_number:number = 0
+  @State friend_number:string = ''
+  @State friendList: UserDTO[] = []
+  @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
+
+  aboutToAppear() {
+      this.getFriends()
+  }
+
+  private async getFriends(){
+    const result = await getFriendList<Page<UserDTO[]>>(1,10)
+    if (result.code === '200') {
+      this.friendList = result.data.records
+      this.friend_number = result.data.size
+    }else {
+      console.error('请求失败:', result.msg)
+    }
+  }
 
   build() {
     Column() {
@@ -17,12 +36,19 @@ export struct FriendView{
             .fontSize(14)
             .margin({
               left: 10,
+              top:10
             })
         }
 
-        ForEach([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], (item:number, index) => {
-          FriendItem()
-        })
+        ForEach(this.friendList, (item: UserDTO) => {
+          ListItem() {
+            FriendItem({item: item})
+              .onClick(() => {
+                // 跳转到用户详情页
+                // router.pushUrl({ url: 'pages/UserDetailPage', params: { userId: item.id } })
+              })
+          }
+        }, (item: UserDTO) => item.toString())
 
       }
       .layoutWeight(1)
@@ -37,7 +63,6 @@ export struct FriendView{
     .margin({
       left:10,
       right:10,
-      top:10,
     })
   }
 }

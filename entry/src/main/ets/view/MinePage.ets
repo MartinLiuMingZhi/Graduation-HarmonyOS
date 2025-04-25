@@ -3,6 +3,9 @@ import { Font } from "@ohos.arkui.UIContext"
 import { SearchView } from "./SearchView"
 import { PlayerComponent } from "./PlayerComponent"
 import { PlayListItem } from "./PlayListItem"
+import { logout } from "../apis/logout"
+import { PreferencesUtil } from "../utils/PreferencesUtil"
+import { promptAction, router } from "@kit.ArkUI"
 
 @Entry
 @Component
@@ -98,6 +101,7 @@ export struct MinePage {
              top: 10,
            })
 
+
          }
          .width('100%')
          .height('100%')
@@ -105,9 +109,32 @@ export struct MinePage {
       .scrollBar(BarState.Off)
       .height(550)
 
+      Button('退出登录')
+        .onClick(() => {
+          this.handleLogout()
+        })
     }
     .width('100%')
     .height('100%')
     .backgroundColor($r('app.color.white_background'))
   }
+
+  private async handleLogout(){
+      try {
+        const result = await logout<string>();
+        if (result.code === '200') {
+            await PreferencesUtil.deleteAsync('token');
+
+            router.replaceUrl({ url: 'pages/LoginPage' });
+        }else{
+          promptAction.showToast({
+            message: result.msg
+          })
+        }
+
+      }catch (e) {
+        console.error('退出登录失败:', e);
+      }
+  }
+
 }
