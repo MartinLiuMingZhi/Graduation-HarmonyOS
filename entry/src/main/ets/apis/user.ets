@@ -1,7 +1,7 @@
 import request from '../request/request'
 
 export interface FriendRequestResponse{
-  userid: number,
+  userid: string,
   username: string,
   email: string,
   avatar: string,
@@ -10,7 +10,7 @@ export interface FriendRequestResponse{
 }
 
 export interface UserDTO{
-  userid: number,
+  userid: string,
   username: string,
   email: string,
   avatar: string,

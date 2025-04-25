@@ -1,4 +1,5 @@
 import { UserDTO } from "../apis/user";
+import { MessageBottomComponent } from "./MessageBottomComponent";
 
 @Builder
 export function ChatViewBuilder() {
@@ -8,19 +9,29 @@ export function ChatViewBuilder() {
 @Component
 export struct ChatView {
   @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
-  @State title: string = '';
+  @State userInfo: UserDTO = {
+    userid: '',
+    username: '',
+    email: '',
+    avatar: '',
+    sex: ''
+  };
 
   aboutToAppear(): void {
-     this.pathStack.getParamByName('ChatView')
-
+    const param: UserDTO[] = this.pathStack.getParamByName('ChatView') as UserDTO[];
+    this.userInfo = param[0];
   }
 
   build() {
     NavDestination() {
       Column() {
+        Scroll(){
 
+        }
+
+        MessageBottomComponent()
       }
     }
-
+    .title(this.userInfo.username)
   }
 }

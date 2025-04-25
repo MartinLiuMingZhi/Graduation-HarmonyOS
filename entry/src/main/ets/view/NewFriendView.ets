@@ -24,7 +24,7 @@ export struct NewFriendView{
       List({space: 10}){
           ForEach(this.friendRequestList, (item: FriendRequestResponse) => {
             ListItem() {
-              FriendRequestItem({item: item , onCustomClick:()=>{ this.handleAddFriend(item.userid) }})
+              FriendRequestItem({item: item , onCustomClick:()=>{ this.handleAddFriend(Number(item.userid)) }})
                 .onClick(() => {
                   // 跳转到用户详情页
                   // router.pushUrl({ url: 'pages/UserDetailPage', params: { userId: item.id } })
@@ -44,7 +44,7 @@ export struct NewFriendView{
       if (result.code === '200') {
           console.log('请求成功:', result.msg)
         // 移除已处理的请求项以更新 UI
-        this.friendRequestList = this.friendRequestList.filter(item => item.userid!== requesterId);
+        this.friendRequestList = this.friendRequestList.filter(item => Number(item.userid)!== requesterId);
       } else {
         console.error('请求失败:', result.msg)
       }

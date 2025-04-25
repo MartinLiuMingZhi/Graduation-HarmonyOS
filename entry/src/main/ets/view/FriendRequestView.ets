@@ -56,7 +56,7 @@ export struct FriendRequestView{
 
         ForEach(this.friendRequestList, (item: FriendRequestResponse) => {
           ListItem() {
-            FriendRequestItem({ item: item , onCustomClick:()=>{ this.handleAddFriend(item.userid)}})
+            FriendRequestItem({ item: item , onCustomClick:()=>{ this.handleAddFriend(Number(item.userid))}})
               .onClick(() => {
                 // 跳转到用户详情页
                 // router.pushUrl({ url: 'pages/UserDetailPage', params: { userId: item.id } })
