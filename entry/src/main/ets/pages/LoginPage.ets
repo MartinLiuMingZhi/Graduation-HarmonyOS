@@ -99,7 +99,7 @@ struct LoginPage {
         const oneDayInMillis = 24 * 60 * 60 * 1000; // 一天的毫秒数
         const expirationTime = currentTime + oneDayInMillis;
         await PreferencesUtil.putAsync('tokenExpiration', expirationTime.toString());
-
+        await PreferencesUtil.putAsync('userInfo', JSON.stringify(result.data))
         //初始化MediaService
         MediaService.getInstance();
         router.replaceUrl({ url: 'pages/MainPage' })

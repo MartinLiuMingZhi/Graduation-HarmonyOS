@@ -30,7 +30,7 @@ export struct MessageComponent {
       // 消息气泡
       Stack({ alignContent: Alignment.Start }) {
         Text(this.content)
-          .padding({ left: 16, top: 0, right: 16, bottom: 8 })
+          .padding({ left: 16, top: 8, right: 16, bottom: 8 })
           .backgroundColor(this.isMe ? '#007AFF' : '#F5F5F5')
           .borderRadius(15)
           .fontColor(this.isMe ? Color.White : Color.Black)

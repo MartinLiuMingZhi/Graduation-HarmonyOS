@@ -51,3 +51,10 @@ export function cancelPost<T>(postId:number){
     data:{postId}
   })
 }
+
+export function getPostList<T>(){
+  return request<T>({
+    url:'/posts/list',
+    method:'GET',
+  })
+}

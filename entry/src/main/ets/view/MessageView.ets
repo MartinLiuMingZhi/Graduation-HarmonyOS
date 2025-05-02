@@ -1,3 +1,4 @@
+import { ContactItem, getContact } from "../apis/message";
 import { IconColumnComponent } from "./IconColumnComponent"
 import { MessageItem } from "./MessageItem"
 
@@ -12,6 +13,7 @@ export struct MessageView {
   @State customPopup: boolean = false
   @State selectedAction: string = '';
   @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
+  @State contactList: ContactItem[] = []
 
   // 下拉选项配置
   private dropdownOptions: SelectItem[] = [
@@ -54,6 +56,19 @@ export struct MessageView {
     .backgroundColor(Color.White)
     .borderRadius(8)
     .shadow({ radius: 8, color: '#1F000000', offsetX: 2, offsetY: 2 })
+  }
+
+  aboutToAppear(): void {
+    this.getContactList()
+  }
+
+  private async getContactList(){
+    const result = await getContact<ContactItem[]>()
+    if(result.code === '200'){
+      this.contactList = result.data
+    }else {
+      console.error('获取联系人列表失败:', JSON.stringify(result.msg))
+    }
   }
 
   build() {
@@ -130,22 +145,15 @@ export struct MessageView {
             right:30
           })
 
-          MessageItem()
-          MessageItem()
-          MessageItem()
-          MessageItem()
-          MessageItem()
-          MessageItem()
-          MessageItem()
-          MessageItem()
-          MessageItem()
-          MessageItem()
-          MessageItem()
-          MessageItem()
-          MessageItem()
-          MessageItem()
-          MessageItem()
+          ForEach(this.contactList, (item: ContactItem) => {
+            MessageItem({item: item})
+          })
+
         }
+        .width('100%')
+        .height('100%')
+
+
       }
       .scrollBar(BarState.Off)
       .width('100%')

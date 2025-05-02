@@ -1,14 +1,13 @@
+import { ContactItem } from "../apis/message"
+
 @Component
 @Preview
 export struct MessageItem {
-   @State img: string | Resource = $r('app.media.song_img');
-   @State title: string = '时间回答所有';
-   @State content: string  = '时间回答所有撒娇啥叫萨哈叫啥撒谎吉萨洒家杀价杀手卡萨看啥看啥课件萨克的骄傲看得见啊看得见啊案件扩大的急啊卡的';
-   @State time: string = '2024-09-23 12:00';
+   @Prop item: ContactItem
 
    build() {
      Row(){
-       Image(this.img)
+       Image(this.item.avatar)
          .width(40)
          .height(40)
          .borderRadius(20)
@@ -18,11 +17,11 @@ export struct MessageItem {
 
        Column(){
          Row(){
-           Text(this.title)
+           Text(this.item.username)
              .fontSize(14)
              .fontWeight(FontWeight.Normal)
 
-           Text(this.time)
+           Text(this.item.lastTime)
              .fontSize(10)
              .fontColor(Color.Gray)
              .margin({
@@ -35,7 +34,7 @@ export struct MessageItem {
            bottom:5
          })
 
-         Text(this.content)
+         Text(this.item.lastMessage)
            .width('80%')
            .fontSize(10)
            .fontColor(Color.Gray)

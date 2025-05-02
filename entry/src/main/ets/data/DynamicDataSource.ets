@@ -1,11 +1,14 @@
 // 定义一个接口来表示 items 数组中的对象
 export interface DynamicItemData {
-  dynamic_title: string;
-  dynamic_img: string;
-  dynamic_avatar: string;
-  dynamic_name: string;
-  dynamic_likes: string;
-  dynamic_like_state: boolean;
+  postId: string,
+  userId: string,
+  title:string,
+  content:string,
+  createdTime:string,
+  updatedTime:string,
+  likeCount: number,
+  isDeleted: boolean,
+  imageUrls:string[],
 }
 
 // 实现数据源接口
@@ -13,7 +16,11 @@ export class DynamicDataSource implements IDataSource {
   private data: DynamicItemData[] = [];
   private listeners: DataChangeListener[] = [];
 
-  constructor(data: DynamicItemData[]) {
+  // constructor(data: DynamicItemData[]) {
+  //   this.data = data;
+  // }
+
+  setDataArray(data: DynamicItemData[]):  void {
     this.data = data;
   }
 
@@ -25,7 +32,16 @@ export class DynamicDataSource implements IDataSource {
     return this.data[index];
   }
 
-  registerDataChangeListener(_: DataChangeListener): void {}
+  registerDataChangeListener(listener: DataChangeListener): void {
+    if (!this.listeners.includes(listener)) {
+      this.listeners.push(listener);
+    }
+  }
 
-  unregisterDataChangeListener(): void {}
+  unregisterDataChangeListener(listener:  DataChangeListener): void {
+    const index = this.listeners.indexOf(listener);
+    if (index >= 0) {
+      this.listeners.splice(index, 1);
+    }
+  }
 }
