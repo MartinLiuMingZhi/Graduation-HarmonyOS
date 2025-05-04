@@ -41,6 +41,7 @@ export struct ChatView {
     if (Array.isArray(param) && param.length > 0) {
       this.userInfo = param[0];
     }
+    console.info('param',JSON.stringify(param))
 
     // 加载登录用户数据
     try {

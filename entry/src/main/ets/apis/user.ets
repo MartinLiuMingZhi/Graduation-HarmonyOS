@@ -26,3 +26,11 @@ export function getUserByEmailOrUsername<T>(emailOrUsername:string){
   })
 }
 
+export function getUserById<T>(id:number){
+  return request<T>({
+    url:`/users/${id}`,
+    method:'GET',
+    params: { id }
+  })
+}
+

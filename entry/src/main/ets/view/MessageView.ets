@@ -1,4 +1,5 @@
 import { ContactItem, getContact } from "../apis/message";
+import { getUserById, UserDTO } from "../apis/user";
 import { IconColumnComponent } from "./IconColumnComponent"
 import { MessageItem } from "./MessageItem"
 
@@ -14,6 +15,13 @@ export struct MessageView {
   @State selectedAction: string = '';
   @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
   @State contactList: ContactItem[] = []
+  @State user: UserDTO = {
+    userid: '',
+    username: '',
+    email: '',
+    avatar: '',
+    sex: ''
+  };
 
   // 下拉选项配置
   private dropdownOptions: SelectItem[] = [
@@ -147,6 +155,11 @@ export struct MessageView {
 
           ForEach(this.contactList, (item: ContactItem) => {
             MessageItem({item: item})
+              .onClick(async ()=>{
+                  await this.getUserInfo(Number(item.userId))
+                  console.log('点击了用户:', JSON.stringify(this.user))
+                  this.pathStack.pushPathByName('ChatView',this.user)
+              })
           })
 
         }
@@ -160,6 +173,16 @@ export struct MessageView {
       .height('auto')
       .backgroundColor(Color.White)
 
+    }
+  }
+
+  private async getUserInfo(userId: number) {
+    const result = await getUserById<UserDTO>(userId)
+    if (result.code === '200') {
+      this.user = result.data
+      console.log('获取用户信息成功:', JSON.stringify(result.data))
+    } else {
+      console.error('获取用户信息失败:', JSON.stringify(result.msg))
     }
   }
 
