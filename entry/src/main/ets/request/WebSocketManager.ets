@@ -8,7 +8,7 @@ export class WebSocketManager {
   private static instance: WebSocketManager;
   private  ws: webSocket.WebSocket;
   private  defaultIpAddress:string;
-  private heartbeatInterval: number = 30000; // 30秒
+  private heartbeatInterval: number = 20000; // 20秒
   private heartbeatMessage: string = 'ping'; // 心跳消息
   private heartbeatTimer: number | undefined; // 用于保存定时器ID
 
@@ -26,7 +26,7 @@ export class WebSocketManager {
   }
 
   //  根据URL地址，建立一个WebSocket连接。
-  private async connect(){
+  public async connect(){
     this.ws.connect(this.defaultIpAddress,(err: BusinessError,value: boolean)=>{
       if (!err) {
         console.log("Connected successfully");
@@ -36,8 +36,19 @@ export class WebSocketManager {
     })
   }
 
+  //关闭WebSocket连接
+  public async close(){
+    this.ws.close((err: BusinessError,value: boolean)=>{
+      if (!err) {
+        console.log("Close successfully");
+      } else {
+        console.log("Close failed. Err:" + JSON.stringify(err));
+      }
+    })
+  }
+
   // 订阅WebSocket的打开事件。
-  private async subscribeOpen(content:string){
+  public async subscribeOpen(content:string){
     this.ws.on('open', (err: BusinessError, value: Object)=>{
       console.log("on open, status:" + JSON.stringify(value));
       // 当收到on('open')事件时，可以通过send()方法与服务器进行通信
@@ -52,18 +63,19 @@ export class WebSocketManager {
   }
 
   // 取消订阅WebSocket的打开事件。
-  private async unsubscribeOpen(){
+  public async unsubscribeOpen(){
     this.ws.off('open');
   }
 
   //订阅WebSocket的接收到服务器消息事件。
-  private async subscribeMessage(callback:(message:string)=>void){
+  public async subscribeMessage(callback:(message:string)=>void){
     this.ws.on('message', (err: BusinessError, value: string | ArrayBuffer) => {
       if (!err && typeof value === 'string') {
         console.log("Received message:" + value);
         if (value === 'pong') {
           console.log("Received pong response.");
         } else {
+          console.log("Received business message:" + value);
           callback(value); // 正常业务消息回调
         }
       } else {
@@ -73,31 +85,31 @@ export class WebSocketManager {
   }
 
   // 取消订阅WebSocket的接收到服务器消息事件。
-  private async unsubscribeMessage(){
+  public async unsubscribeMessage(){
     this.ws.off('message');
   }
 
   // 订阅WebSocket的关闭事件。
-  private async subscribeClose(){
+  public async subscribeClose(){
     this.ws.on('close', (err: BusinessError, value: webSocket.CloseResult)=>{
       console.log("on close, status:" + JSON.stringify(value));
     })
   }
 
   // 取消订阅WebSocket的关闭事件。
-  private async unsubscribeClose(){
+  public async unsubscribeClose(){
     this.ws.off('close');
   }
 
   // 订阅WebSocket的Error事件。
-  private async subscribeError(){
+  public async subscribeError(){
     this.ws.on('error', (err: BusinessError)=>{
       console.log("on error, status:" + JSON.stringify(err));
     })
   }
 
   // 取消订阅WebSocket的Error事件。
-  private async unsubscribeError(){
+  public async unsubscribeError(){
     this.ws.off('error');
   }
 

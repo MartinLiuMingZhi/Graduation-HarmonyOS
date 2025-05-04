@@ -1,6 +1,7 @@
 import { LoginResponse } from "../apis/api";
 import { getSingleHistoryMessages, Message } from "../apis/message";
 import { UserDTO } from "../apis/user";
+import { WebSocketManager } from "../request/WebSocketManager";
 import { PreferencesUtil } from "../utils/PreferencesUtil";
 import { MessageBottomComponent } from "./MessageBottomComponent";
 import { MessageComponent } from "./MessageComponent";
@@ -30,9 +31,38 @@ export struct ChatView {
     sex: '',
     token: ''
   };
+  private wsManager: WebSocketManager = WebSocketManager.getInstance();
 
   aboutToAppear(): void {
+    this.wsManager.connect();
+    this.wsManager.startHeartbeat();
+
+    // 订阅消息
+    this.wsManager.subscribeMessage((rawMessage: string) => {
+      try {
+        const message:Message = JSON.parse(rawMessage); // 解析为对象
+
+        console.info('收到新消息:', message);
+
+        // 判断是否是当前聊天用户的对话
+        if (message.fromUserId === this.userInfo.userid ||
+          message.toUserId === this.user.userid) {
+          // 更新 messageList，触发 UI 刷新
+          this.messageList = [...this.messageList, message];
+        }
+      } catch (e) {
+        console.error('消息解析失败:', rawMessage);
+      }
+    });
+
+    // 加载用户信息并加载聊天记录
     this.loadUserInfoAndMessages();
+  }
+
+  aboutToDisappear(): void {
+    this.wsManager = WebSocketManager.getInstance();
+    this.wsManager.stopHeartbeat();
+    this.wsManager.close();
   }
 
   private async loadUserInfoAndMessages(): Promise<void> {
