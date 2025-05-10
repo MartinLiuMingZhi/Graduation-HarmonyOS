@@ -1,14 +1,39 @@
 import { CardView } from "./CardView"
 import { SearchView } from "./SearchView"
 import { PlayListItem } from "./PlayListItem"
-import { logout } from "../apis/logout"
 import { PreferencesUtil } from "../utils/PreferencesUtil"
-import { promptAction, router } from "@kit.ArkUI"
+import { LoginResponse } from "../apis/login"
 
 @Entry
 @Component
 export struct MinePage {
   @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
+  @State user:LoginResponse = {
+    userid: '',
+    username: '',
+    email: '',
+    avatar: '',
+    sex: '',
+    token: ''
+  }
+
+  aboutToAppear(): void {
+    this.loadUserInfo()
+  }
+
+  private async loadUserInfo(){
+    // 加载登录用户数据
+    try {
+      const userData = await PreferencesUtil.getAsync<string>('userInfo');
+      if (userData) {
+        this.user = JSON.parse(userData)
+      }else{
+        console.warn('User info not found in PreferencesUtil');
+      }
+    } catch (error) {
+      console.error('Failed to load user info:', error);
+    }
+  }
 
   build() {
     Column(){
@@ -19,13 +44,15 @@ export struct MinePage {
          .width(20)
          .height(20)
          .onClick(()=>{
-
+            this.pathStack.pushPathByName('SettingPage',null)
          })
     }
 
       Scroll(){
          Column(){
-           CardView()
+           CardView({
+             user: this.user
+           })
            Text('我的歌单')
              .fontSize(12)
              .fontWeight(FontWeight.Bold)
@@ -117,32 +144,12 @@ export struct MinePage {
       .scrollBar(BarState.Off)
       .height(550)
 
-      Button('退出登录')
-        .onClick(() => {
-          this.handleLogout()
-        })
     }
     .width('100%')
     .height('100%')
     .backgroundColor($r('app.color.white_background'))
   }
 
-  private async handleLogout(){
-      try {
-        const result = await logout<string>();
-        if (result.code === '200') {
-            await PreferencesUtil.deleteAsync('token');
 
-            router.replaceUrl({ url: 'pages/LoginPage' });
-        }else{
-          promptAction.showToast({
-            message: result.msg
-          })
-        }
-
-      }catch (e) {
-        console.error('退出登录失败:', e);
-      }
-  }
 
 }

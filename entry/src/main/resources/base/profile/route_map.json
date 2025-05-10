@@ -55,6 +55,14 @@
       "data": {
         "description" : "PostDetailPage"
       }
+    },
+    {
+      "name": "SettingPage",
+      "pageSourceFile": "src/main/ets/view/SettingPage.ets",
+      "buildFunction": "SettingPageBuilder",
+      "data": {
+        "description" : "SettingPage"
+      }
     }
 
   ]
