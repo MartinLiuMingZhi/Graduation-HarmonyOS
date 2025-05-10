@@ -119,7 +119,7 @@ struct PostEditorPage {
               left: 8,
             })
             .onClick(() => {
-              console.log('点击了预览按钮');
+              this.pathStack.pushPathByName('PostPreviewPage',[this.title,this.content,this.selectedImages])
             })
 
           Button('发布图文')

@@ -7,10 +7,11 @@ export struct MessageBottomComponent {
   @State message: string = ''
   @Prop toUserId: number
   @Link messageList: Message[]
+  private textController: TextAreaController = new TextAreaController()
 
   build() {
     Row() {
-      TextArea()
+      TextArea({text: this.message,controller: this.textController})
         .width('75%')
         .height(35)
         .backgroundColor(Color.White)
@@ -25,6 +26,8 @@ export struct MessageBottomComponent {
         .onClick(() => {
           console.log('点击了按钮')
           this.sendMessage()
+          //清空输入框
+          this.message = ''
         })
         .margin({
           left: 10

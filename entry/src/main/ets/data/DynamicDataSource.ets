@@ -44,4 +44,11 @@ export class DynamicDataSource implements IDataSource {
       this.listeners.splice(index, 1);
     }
   }
+
+  notifyDataChanged(): void {
+    this.listeners.forEach(listener => {
+      listener.onDataReloaded(); // 通知 UI 刷新数据
+    });
+  }
+
 }

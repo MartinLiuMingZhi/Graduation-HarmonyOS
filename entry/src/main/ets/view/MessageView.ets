@@ -139,6 +139,9 @@ export struct MessageView {
               icon:$r('app.media.ic_new_friend'),
               text:'新朋友'
             })
+              .onClick(() => {
+                this.pathStack.pushPathByName('AddFriendView',2)
+              })
 
             IconColumnComponent({
               icon:$r('app.media.ic_comment'),
@@ -193,7 +196,7 @@ export struct MessageView {
     switch (value) {
       case '添加好友':
         // 跳转到添加好友页面
-        this.pathStack.pushPathByName('AddFriendView',null)
+        this.pathStack.pushPathByName('AddFriendView',1)
         break;
       case '创建群聊':
         this.pathStack.pushPathByName('CreateGroupChatView',null)

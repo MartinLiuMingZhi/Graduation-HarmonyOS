@@ -1,7 +1,5 @@
 import { CardView } from "./CardView"
-import { Font } from "@ohos.arkui.UIContext"
 import { SearchView } from "./SearchView"
-import { PlayerComponent } from "./PlayerComponent"
 import { PlayListItem } from "./PlayListItem"
 import { logout } from "../apis/logout"
 import { PreferencesUtil } from "../utils/PreferencesUtil"
@@ -10,10 +8,20 @@ import { promptAction, router } from "@kit.ArkUI"
 @Entry
 @Component
 export struct MinePage {
+  @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
 
   build() {
     Column(){
+     Row(){
       SearchView()
+        .width('90%')
+       Image($r('app.media.ic_setting'))
+         .width(20)
+         .height(20)
+         .onClick(()=>{
+
+         })
+    }
 
       Scroll(){
          Column(){

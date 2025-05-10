@@ -39,6 +39,22 @@
       "data": {
         "description" : "ChatView"
       }
+    },
+    {
+      "name": "PostPreviewPage",
+      "pageSourceFile": "src/main/ets/view/PostPreviewPage.ets",
+      "buildFunction": "PostPreviewPageBuilder",
+      "data": {
+        "description" : "PostPreviewPage"
+      }
+    },
+    {
+      "name": "PostDetailPage",
+      "pageSourceFile": "src/main/ets/view/PostDetailPage.ets",
+      "buildFunction": "PostDetailPageBuilder",
+      "data": {
+        "description" : "PostDetailPage"
+      }
     }
 
   ]
