@@ -6,27 +6,46 @@ export struct ISong{
   @Prop singer: string
   build(){
     Row(){
-      Image(this.img)
-        .width(50)
-        .height(50)
-        .borderRadius(10)
-        .margin({
-          left: 20,
-          right: 20
-        })
-      Column(){
-        Text(this.name)
-          .fontSize(16)
-          .fontWeight(FontWeight.Bold)
+      Row({space: 20}){
+        Image(this.img)
+          .width(50)
+          .height(50)
+          .borderRadius(10)
 
-        Text(this.singer)
-          .fontSize(12)
+        Column(){
+          Text(this.name)
+            .fontSize(16)
+            .fontWeight(FontWeight.Bold)
+            .textAlign(TextAlign.Start)
+            .alignSelf(ItemAlign.Start)
+
+          Text(this.singer)
+            .fontSize(12)
+            .textAlign(TextAlign.Start)
+            .alignSelf(ItemAlign.Start)
+        }
       }
+      .width('70%')
       .margin({
-        left: 20
+        left: 10
       })
+      .justifyContent(FlexAlign.Start)
+
+      Row({space: 5}){
+        SymbolGlyph($r('sys.symbol.play_round_rectangle'))
+          .width(50)
+          .height(50)
+
+        SymbolGlyph($r('sys.symbol.play_fill'))
+          .width(50)
+          .height(50)
+      }
+      .width('30%')
+      .justifyContent(FlexAlign.End)
+
     }
     .width('100%')
     .height('auto')
+    .justifyContent(FlexAlign.SpaceBetween)
   }
 }

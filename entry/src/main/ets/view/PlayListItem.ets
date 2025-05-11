@@ -26,16 +26,17 @@ export struct PlayListItem{
             .fontWeight(FontWeight.Regular)
 
           Text(this.PlayListSongCount)
+            .alignSelf(ItemAlign.Start)
             .fontSize(12)
             .margin({
               top: 5
             })
         }
       }
-      .width('100%')
+      .width('auto')
       .height('auto')
     }
-    .width('100%')
+    .width('auto')
     .height('auto')
   }
 

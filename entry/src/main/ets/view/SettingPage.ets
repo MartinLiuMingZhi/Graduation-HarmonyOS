@@ -17,7 +17,7 @@ export struct  SettingPage{
   @Builder
   settingCell(item: ItemData) {
     Row() {
-      Row({}) {
+      Row() {
         Text(item.title)
           .fontSize('16fp')
           .padding({
@@ -69,6 +69,31 @@ export struct  SettingPage{
                     this.settingCell(cell)
                   }
                   .height('48vp')
+                  //根据cellIndex添加不同的点击事件
+                  .onClick(()=>{
+                    switch (cellIndex) {
+                      case 0:
+                        //跳转到个人资料页面
+                        this.pathStack.pushPathByName('PersonalPage',null);
+                        break;
+                      case 1:
+                        //跳转到账号与安全页面
+                        break;
+                      case 2:
+                        //跳转到关于页面
+                        break;
+                      case 3:
+                        //跳转到隐私设置页面
+                      case 4:
+                        //跳转到隐私政策管理页面
+                        break;
+                      case 5:
+                        //跳转到清除缓存页面
+                        break;
+                      default:
+                        break;
+                    }
+                  })
                 })
               }
               .divider({

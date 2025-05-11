@@ -127,8 +127,12 @@ export struct MinePage {
                PlayListCover: 'https://p1.music.126.net/BKj1SfKtM7UiZYnIOWGmrw==/109951169999071719.jpg',
                PlayListSongCount: '3首'
              })
+             PlayListItem({
+               PlayListName: '我的歌单2',
+               PlayListCover: 'https://p1.music.126.net/BKj1SfKtM7UiZYnIOWGmrw==/109951169999071719.jpg',
+               PlayListSongCount: '3首'
+             })
            }
-           .listDirection(Axis.Horizontal)
            .listDirection(Axis.Horizontal)
            .width('95%')
            .height('auto')
