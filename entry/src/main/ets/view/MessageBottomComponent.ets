@@ -51,7 +51,7 @@ export struct MessageBottomComponent {
     const result = await sendSingleMessage<Message>(this.toUserId, this.message)
     if (result.code === '200') {
       console.log('SendMessage:', JSON.stringify(result.data))
-      this.messageList.push(result.data)
+      // this.messageList.push(result.data)
     } else {
       console.error('SendMessage:', JSON.stringify(result.msg))
     }

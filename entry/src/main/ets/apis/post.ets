@@ -58,3 +58,15 @@ export function getPostList<T>(){
     method:'GET',
   })
 }
+
+export interface PostItemData{
+  postId: string,
+  userId: string,
+  title: string,
+  content: string,
+  createdTime: string,
+  updatedTime: string,
+  likeCount: number,
+  isDeleted:  boolean,
+  imageUrls: string[],
+}

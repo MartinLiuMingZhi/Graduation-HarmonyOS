@@ -74,79 +74,82 @@ export struct PostPreviewPage {
   build() {
     NavDestination() {
       Column() {
-        // 可滚动区域
-        Scroll() {
-          Column() {
-            Swiper() {
-              ForEach(this.images, (item: string, index) => {
-                Image(item)
-                  .width('100%')
-                  .height('auto')
-                  .objectFit(ImageFit.Cover)
-              })
-            }
-            .width('100%')
-            .height('100%')
-            .loop(false)
-            .indicator(
-              Indicator.dot()
-                .selectedColor(Color.Red)
-            )
-
-            // 标题
-            Text(this.title)
-              .fontSize(16)
-              .fontWeight(FontWeight.Bold)
-              .textAlign(TextAlign.Start)
-              .alignSelf(ItemAlign.Start) // 强制左对齐
-              .margin({ top: 10, left: 10, right: 10 })
-
-            // 内容
-            Text(this.content)
-              .fontSize(14)
-              .textAlign(TextAlign.Start)
-              .alignSelf(ItemAlign.Start) // 强制左对齐
-              .margin({ top: 10, left: 10, right: 10 })
-
-            Divider()
+        Column(){
+          // 可滚动区域
+          Scroll() {
+            Column() {
+              Swiper() {
+                ForEach(this.images, (item: string, index) => {
+                  Image(item)
+                    .width('100%')
+                    .height('60%')
+                    .objectFit(ImageFit.Cover)
+                })
+              }
               .width('100%')
-              .margin({ top: 10 })
+              .height('auto')
+              .loop(false)
+              .indicator(
+                Indicator.dot()
+                  .selectedColor(Color.Red)
+              )
 
-            // 点赞收藏评论
-            Row() {
-              Blank().layoutWeight(1)
+              // 标题
+              Text(this.title)
+                .fontSize(16)
+                .fontWeight(FontWeight.Bold)
+                .textAlign(TextAlign.Start)
+                .alignSelf(ItemAlign.Start) // 强制左对齐
+                .margin({ top: 10, left: 10, right: 10 })
 
-              SymbolGlyph($r('sys.symbol.heart'))
-                .width(20)
-                .height(20)
-
-              Text('点赞')
+              // 内容
+              Text(this.content)
                 .fontSize(14)
-                .margin({ right: 10 })
+                .textAlign(TextAlign.Start)
+                .alignSelf(ItemAlign.Start) // 强制左对齐
+                .margin({ top: 10, left: 10, right: 10 })
 
-              SymbolGlyph($r('sys.symbol.star'))
-                .width(20)
-                .height(20)
+              Divider()
+                .width('100%')
+                .margin({ top: 10 })
 
-              Text('收藏')
-                .fontSize(14)
-                .margin({ right: 10 })
+              // 点赞收藏评论
+              Row() {
+                Blank().layoutWeight(1)
 
-              SymbolGlyph($r('sys.symbol.ellipsis_message'))
-                .width(20)
-                .height(20)
+                SymbolGlyph($r('sys.symbol.heart'))
+                  .width(20)
+                  .height(20)
 
-              Text('评论')
-                .fontSize(14)
-                .margin({ right: 10 })
+                Text('点赞')
+                  .fontSize(14)
+                  .margin({ right: 10 })
+
+                SymbolGlyph($r('sys.symbol.star'))
+                  .width(20)
+                  .height(20)
+
+                Text('收藏')
+                  .fontSize(14)
+                  .margin({ right: 10 })
+
+                SymbolGlyph($r('sys.symbol.ellipsis_message'))
+                  .width(20)
+                  .height(20)
+
+                Text('评论')
+                  .fontSize(14)
+                  .margin({ right: 10 })
+              }
+              .justifyContent(FlexAlign.End)
+              .margin({ right: 10, top: 10, bottom: 10 }) // 留出按钮高度
             }
-            .justifyContent(FlexAlign.End)
-            .margin({ right: 10, top: 10, bottom: 10 }) // 留出按钮高度
           }
+          .scrollBar(BarState.Off)
+          .width('100%')
         }
-        .scrollBar(BarState.Off)
         .width('100%')
-        .layoutWeight(1) // 让 Scroll 填满剩余空间
+        .layoutWeight(1)
 
         // 底部固定按钮
         Row() {
