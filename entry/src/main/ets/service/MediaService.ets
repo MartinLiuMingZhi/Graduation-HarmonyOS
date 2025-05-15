@@ -13,6 +13,7 @@ import { SongConstants } from "../data/SongConstants";
 import { CardData } from "../data/CardData";
 import { formBindingData, formProvider } from "@kit.FormKit";
 import { getSongList, Song } from "../apis/song";
+import { SongRepository } from "../data/SongRepository";
 
 const TAG = "MediaService"
 
@@ -140,43 +141,54 @@ export class MediaService{
     this.playPrevious();
   };
 
-  private static async fetchSongList(){
-    Logger.info(TAG, 'fetchSongList');
-    try {
-       const  response = await getSongList<Song[]>();
-       Logger.info(TAG,  JSON.stringify(response));
-       return response.data;
-    } catch (error) {
-      Logger.info(TAG, );
-      Logger.error(TAG, 'fetchSongList error: ', error);
-      return [];
-    }
-  }
-
-  async loadSongList() {
-    try {
-      const songList = await MediaService.fetchSongList();
-      Logger.info(TAG, JSON.stringify(songList));
-      if (Array.isArray(songList) && songList.length > 0) {
-        this.songList = songList;
-        AppStorage.setOrCreate('songList', songList); // 持久化歌曲列表
-      }
-    } catch (error) {
-      console.error('Error loading song list:', error);
-    }
-  }
 
   constructor() {
-    // let list: SongItem[] | undefined = AppStorage.get('songList');
-    // if (list) {
-    //   this.songList = list;
-    // }
     if (!MediaService.initialized) {
       this.songItemBuilder = new SongItemBuilder();
       this.initAudioPlayer();
-      this.loadSongList(); // 调用新方法加载歌曲列表
+      this.loadInitialSongs()
       MediaService.initialized = true;
     }
+  }
+  private async loadInitialSongs() {
+    // 使用数据仓库获取歌曲
+    this.songList = await SongRepository.getInstance().getAllSongs();
+    AppStorage.setOrCreate('songList', this.songList);
+  }
+
+  // 替换原来的 loadSongList 方法
+  public async loadCustomPlaylist(playlist: SongItem[]) {
+    this.songList = playlist;
+    AppStorage.setOrCreate('songList', playlist);
+    // 自动播放第一个
+    if (this.songList.length > 0) {
+      this.loadAssent(0);
+    }
+  }
+
+  // 添加歌曲到播放列表
+  public async addSongToPlaylist(song: SongItem) {
+    this.songList.push(song);
+    await SongRepository.getInstance().addSongToLocal(song as Song);
+    AppStorage.setOrCreate('songList', this.songList);
+  }
+
+  // 从播放列表移除歌曲
+  public async removeSongFromPlaylist(index: number) {
+    this.songList.splice(index, 1);
+    await SongRepository.getInstance().removeSongFromLocal(index);
+    AppStorage.setOrCreate('songList', this.songList);
+
+    // 如果删除的是当前播放歌曲，自动播放下一首
+    if (index === this.musicIndex) {
+      this.musicIndex = Math.min(index, this.songList.length - 1);
+      this.loadAssent(this.musicIndex);
+    }
+  }
+
+  // 获取当前播放列表
+  public getPlaylist(): SongItem[] {
+    return this.songList;
   }
 
   public static getInstance(): MediaService {
