@@ -1,9 +1,12 @@
-import { CommentDTO, getCommentCounts,
+import { CommentDTO,
+  createComment,
+  getCommentCounts,
   getComments,
   getUserById, LoginResponse, UserDTO } from "../apis/api";
 import { DynamicItemData } from "../data/DynamicDataSource";
 import { PreferencesUtil } from "../utils/PreferencesUtil";
 import { CommentItem } from "./CommentItem";
+import { LengthUnit } from "@kit.ArkUI";
 
 @Builder
 export function PostDetailPageBuilder(){
@@ -20,7 +23,9 @@ export struct PostDetailPage {
   @State myInfo:LoginResponse = {} as LoginResponse;
   @State commentList: CommentDTO[] = [];    //评论列表
   @State isLoadingComments: boolean = false; // 加载状态
-  @State inputComment: string = '';    // 输入框内容
+  @State showBottomCommentSheet: boolean = false   // 底部评论按钮用
+  @State showInlineCommentSheet: boolean = false  // 内容区评论输入框用
+  @State commentText: string = ''
 
   aboutToAppear(): void {
     const param: DynamicItemData[] = this.pathStack.getParamByName('PostDetailPage') as DynamicItemData[];
@@ -66,6 +71,20 @@ export struct PostDetailPage {
               TextInput({placeholder:'有话要说,快来评论'})
                 .margin({left:10})
                 .width('80%')
+                .enableKeyboardOnFocus(false)
+                .focusable(false)
+                .onClick(() => {
+                  this.showInlineCommentSheet = true
+                })
+                .bindSheet(this.showInlineCommentSheet,this.CommentBuilder('评论','0'),{
+                  height: '200vp',
+                  dragBar: false,
+                  showClose: false,
+                  onDisappear: () => {
+                    console.log('bindSheet onDisappear, isShowPlay:', this.showInlineCommentSheet);
+                    this.showInlineCommentSheet = false; // 隐藏播放列表
+                  },
+                })
 
             }
             .width('100%')
@@ -96,7 +115,7 @@ export struct PostDetailPage {
             } else {
               // 已加载到评论，正常展示
               ForEach(this.commentList, (item: CommentDTO) => {
-                CommentItem({ comment: item })
+                CommentItem({ comment: item, myInfo: this.myInfo,postId: this.post.postId })
               })
             }
 
@@ -125,6 +144,20 @@ export struct PostDetailPage {
           .backgroundColor($r('app.color.white_background'))
           .borderRadius(20)
           .width('50%')
+          .enableKeyboardOnFocus(false)
+          .focusable(false)
+          .onClick(() => {
+            this.showBottomCommentSheet = true
+          })
+          .bindSheet(this.showBottomCommentSheet,this.CommentBuilder('评论','0'),{
+            height: '100vp',
+            dragBar: false,
+            showClose: false,
+            onDisappear: () => {
+              console.log('bindSheet onDisappear, isShowPlay:', this.showBottomCommentSheet);
+              this.showBottomCommentSheet = false; // 隐藏播放列表
+            },
+          })
 
         SymbolGlyph($r('sys.symbol.heart'))
           .width(30)
@@ -185,6 +218,31 @@ export struct PostDetailPage {
     .margin({top: 10})
   }
 
+  @Builder
+  CommentBuilder(placeholderContent:string,parentCommentId:string){
+    Row({space:10}) {
+      TextArea({placeholder:placeholderContent})
+        .width('75%')
+        .height('auto')
+        .onChange((value: string) => {
+          this.commentText = value
+        })
+
+      Button("发送")
+        .width('20%')
+        .height('auto')
+        .fontSize(16)
+        .onClick(() => {
+          this.submitComment(this.commentText, parentCommentId)
+          this.commentText = ''
+          this.showBottomCommentSheet = false
+        })
+
+    }
+    .width('100%')
+    .padding(10)
+  }
+
 
   private async getUserInfo(){
     const result = await getUserById<UserDTO>(Number(this.post.userId))
@@ -236,4 +294,23 @@ export struct PostDetailPage {
     }
   }
 
+  private async submitComment(content: string, parentCommentId: string) {
+    try {
+      const result = await createComment<string>({
+        userId: Number(this.myInfo.userid),
+        postId: Number(this.post.postId),
+        content,
+        parentCommentId: Number(parentCommentId),
+      });
+      if (result.code === '200') {
+        console.log('提交评论成功:', result.data);
+        this.commentText = '';
+        this.loadComments();
+      } else {
+        console.error('提交评论失败:', result.msg);
+      }
+    }catch (e){
+      console.error('提交评论出错:', e);
+    }
+  }
 }

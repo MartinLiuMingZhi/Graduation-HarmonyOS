@@ -9,7 +9,7 @@ interface BaseResponse<T>{
 }
 
 const instance = axios.create({
-  baseURL: 'http://10.0.2.2:5600/api',
+  baseURL: 'http://music.liumingzhi.cn/api',
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
