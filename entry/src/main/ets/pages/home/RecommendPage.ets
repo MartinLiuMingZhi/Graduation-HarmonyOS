@@ -58,7 +58,11 @@ export struct RecommendPage {
         .height('auto')
       }
     }
-    .padding(10)
+    .padding({
+      left:10,
+      right:10,
+      bottom:10
+    })
     .width('100%')
     .height('100%')
     .scrollBar(BarState.Off)

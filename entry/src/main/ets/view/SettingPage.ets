@@ -64,14 +64,14 @@ export struct  SettingPage{
           List({ space: 12 }) {
             ForEach(SettingViewModel.getSettingListData(), (item: ItemData[], index: number) => {
               ListItemGroup() {
-                ForEach(item, (cell: ItemData, cellIndex) => {
+                ForEach(item, (cell: ItemData) => {
                   ListItem() {
                     this.settingCell(cell)
                   }
                   .height('48vp')
                   //根据cellIndex添加不同的点击事件
                   .onClick(()=>{
-                    switch (cellIndex) {
+                    switch (cell.id) {
                       case 0:
                         //跳转到个人资料页面
                         this.pathStack.pushPathByName('PersonalPage',null);
@@ -80,6 +80,7 @@ export struct  SettingPage{
                         //跳转到账号与安全页面
                         break;
                       case 2:
+                        this.pathStack.pushPathByName('AddFriendView',null)
                         //跳转到关于页面
                         break;
                       case 3:

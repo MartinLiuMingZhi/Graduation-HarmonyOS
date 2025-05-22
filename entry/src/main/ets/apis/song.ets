@@ -28,8 +28,9 @@ export function getSongList<T>(){
 
 export function getSongByName<T>(name:string){
   return request<T>({
-    url:'/song/name',
+    url:'/song/listByName',
     method:'GET',
     params:{name}
   })
 }
+

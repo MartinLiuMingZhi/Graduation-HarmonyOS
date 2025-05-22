@@ -1,6 +1,7 @@
 @Entry
 @Component
 export struct SearchView {
+  @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack()
 
   build() {
     Column(){
@@ -8,6 +9,11 @@ export struct SearchView {
         .width('95%')
         .placeholderFont({
           size: 14,
+        })
+        .enableKeyboardOnFocus(false)
+        .focusable(false)
+        .onClick(()=>{
+          this.pathStack.pushPathByName('MusicSearchPage',null)
         })
     }
     .width('100%')

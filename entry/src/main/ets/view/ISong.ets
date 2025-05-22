@@ -31,17 +31,16 @@ export struct ISong{
       })
       .justifyContent(FlexAlign.Start)
 
-      Row({space: 5}){
-        SymbolGlyph($r('sys.symbol.play_round_rectangle'))
-          .width(50)
-          .height(50)
-
-        SymbolGlyph($r('sys.symbol.play_fill'))
-          .width(50)
-          .height(50)
+      Row(){
+        SymbolGlyph($r('sys.symbol.play_round_rectangle_fill'))
+          .fontSize(30)
+          .fontColor([$r('app.color.light_blue')])
       }
-      .width('30%')
+      .width('25%')
       .justifyContent(FlexAlign.End)
+      .margin({
+        right: 20
+      })
 
     }
     .width('100%')

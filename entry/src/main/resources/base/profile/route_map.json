@@ -71,7 +71,16 @@
       "data": {
         "description" : "PersonalPage"
       }
+    },
+    {
+      "name": "MusicSearchPage",
+      "pageSourceFile": "src/main/ets/view/MusicSearchPage.ets",
+      "buildFunction": "MusicSearchPageBuilder",
+      "data": {
+        "description" : "MusicSearchPage"
+      }
     }
+
 
   ]
 }
