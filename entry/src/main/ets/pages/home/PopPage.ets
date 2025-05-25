@@ -13,9 +13,13 @@ export struct PopPage{
   @State listSong:SongItem[] = []
   @State page:number = 1
   @State pageSize:number = 10
+  @State recommendInitialized: boolean = false;
 
   aboutToAppear(): void {
-    this.getSongList()
+    if (!this.recommendInitialized) {
+      this.getSongList()
+      this.recommendInitialized = true;
+    }
   }
 
   build() {
@@ -53,7 +57,7 @@ export struct PopPage{
             })
 
             // 可选：添加底部加载提示
-            if (this.isLoading && this.page > 1) {
+            if (this.isLoading) {
               ListItem() {
                 Flex({ justifyContent: FlexAlign.Center }) { // 使用 Flex 布局居中内容
                   LoadingProgress()

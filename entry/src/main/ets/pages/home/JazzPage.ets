@@ -13,9 +13,13 @@ export struct JazzPage{
   @State listSong:SongItem[] = []
   @State page:number = 1
   @State pageSize:number = 10
+  @State recommendInitialized: boolean = false;
 
   aboutToAppear(): void {
-    this.getSongList()
+    if (!this.recommendInitialized) {
+      this.getSongList()
+      this.recommendInitialized = true;
+    }
   }
 
   build() {
@@ -53,7 +57,7 @@ export struct JazzPage{
             })
 
             // 可选：添加底部加载提示
-            if (this.isLoading && this.page > 1) {
+            if (this.isLoading) {
               ListItem() {
                 Flex({ justifyContent: FlexAlign.Center }) { // 使用 Flex 布局居中内容
                   LoadingProgress()
@@ -93,14 +97,14 @@ export struct JazzPage{
 
   private async getSongList(){
     this.isLoading = true
-    const result = await getSongListByGenre<Page<SongItem[]>>(Genre.POP, this.page, this.pageSize)
+    const result = await getSongListByGenre<Page<SongItem[]>>(Genre.JAZZ, this.page, this.pageSize)
     if (result.code === '200') {
       if (this.page === 1) {
         this.listSong = result.data.records
       } else {
         this.listSong = [...this.listSong, ...result.data.records]
       }
-      console.log('PopPage:', JSON.stringify(this.listSong))
+      console.log('JazzPage:', JSON.stringify(this.listSong))
     } else {
       console.error('请求失败:', result.msg)
     }

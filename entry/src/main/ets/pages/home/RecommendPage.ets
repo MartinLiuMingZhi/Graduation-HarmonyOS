@@ -14,11 +14,14 @@ export struct RecommendPage {
   @State isLoading: boolean = false
   @State page:number = 1
   @State pageSize:number = 10
-
+  @State recommendInitialized: boolean = false;
 
   aboutToAppear(): void {
-    this.getRecommend(1,6)
-    this.getSongList()
+    if (!this.recommendInitialized) {
+      this.getRecommend(1,6)
+      this.getSongList()
+      this.recommendInitialized = true
+    }
   }
 
   build() {
@@ -64,7 +67,7 @@ export struct RecommendPage {
           })
 
           // 可选：添加底部加载提示
-          if (this.isLoading && this.page > 1) {
+          if (this.isLoading) {
             ListItem() {
               Flex({ justifyContent: FlexAlign.Center }) { // 使用 Flex 布局居中内容
                 LoadingProgress()
@@ -76,6 +79,8 @@ export struct RecommendPage {
             }
           }
         }
+        .width('100%')
+        .layoutWeight(1)
         .nestedScroll({
           scrollForward: NestedScrollMode.PARENT_FIRST,
           scrollBackward: NestedScrollMode.SELF_FIRST
@@ -100,6 +105,7 @@ export struct RecommendPage {
   }
 
   private async getSongList(){
+    console.log('正在请求第', this.page, '页数据');
     this.isLoading = true
     const result = await getRandomSong<Page<SongItem[]>>(this.page, this.pageSize)
     if (result.code === '200') {

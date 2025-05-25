@@ -14,10 +14,14 @@ export struct MinePage {
   @State user:LoginResponse = {} as LoginResponse
   @State playListItems:SongItem[] = []
   list:number[] = [1,2,3,4]
+  @State recommendInitialized: boolean = false;
 
   aboutToAppear(): void {
     this.loadUserInfo()
-    this.getRecommend(1,9)
+    if (!this.recommendInitialized) {
+      this.getRecommend(1,9)
+      this.recommendInitialized = true;
+    }
   }
 
   private async loadUserInfo(){

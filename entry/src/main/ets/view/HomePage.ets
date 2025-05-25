@@ -23,9 +23,9 @@ export struct HomePage {
         TabContent() {
           EAPage()
         }.tabBar('欧美')
-        TabContent() {
-          RapPage()
-        }.tabBar('说唱')
+        // TabContent() {
+        //   RapPage()
+        // }.tabBar('说唱')
         TabContent() {
           KpopPage()
         }.tabBar('Kpop')
