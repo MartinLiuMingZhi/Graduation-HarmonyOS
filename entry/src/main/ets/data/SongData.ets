@@ -17,7 +17,7 @@ export class SongItem {
   /**
    * Music logo information.
    */
-  mark: string = '';
+  // mark: string = '';
 
   /**
    * Music avatar information.

@@ -3,6 +3,7 @@ import { EAPage } from "../pages/home/EAPage"
 import { JazzPage } from "../pages/home/JazzPage"
 import { KpopPage } from "../pages/home/KpopPage"
 import { NationalPage } from "../pages/home/NationalPage"
+import { PopPage } from "../pages/home/PopPage"
 import { RapPage } from "../pages/home/RapPage"
 import { RecommendPage } from "../pages/home/RecommendPage"
 import { VillagePage } from "../pages/home/VillagePage"
@@ -34,6 +35,9 @@ export struct HomePage {
         TabContent() {
           JazzPage()
         }.tabBar('爵士')
+        TabContent(){
+          PopPage()
+        }.tabBar('流行')
         TabContent() {
           ClassicalPage()
         }.tabBar('古典')

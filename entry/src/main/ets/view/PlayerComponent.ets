@@ -3,8 +3,8 @@ import { MusicControlComponent } from "./MusicControlComponent";
 import { curves, window } from "@kit.ArkUI";
 import { Logger } from "../utils/Logger";
 import { BusinessError } from "@kit.BasicServicesKit";
-import { SongItem } from "../viewmodel/SongItem";
 import { MediaService } from "../service/MediaService";
+import { SongItem } from "../data/SongData";
 
 @Component
 export struct PlayerComponent{
@@ -295,7 +295,7 @@ export struct PlayerComponent{
                     })
                     .displayPriority(1)
                     .onClick(() => {
-                      this.songList.splice(index, 1);
+                      MediaService.getInstance().removeSongFromPlaylist(index)
                     })
                 }
               }

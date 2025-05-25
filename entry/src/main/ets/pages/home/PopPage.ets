@@ -8,7 +8,7 @@ import { SearchView } from "../../view/SearchView"
 
 @Preview
 @Component
-export struct JazzPage{
+export struct PopPage{
   @State isLoading: boolean = false
   @State listSong:SongItem[] = []
   @State page:number = 1

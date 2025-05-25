@@ -1,58 +1,22 @@
+import { getSongListByGenre } from "../../apis/api"
+import { Page } from "../../apis/BaseResponse"
+import { Genre } from "../../data/GenreData"
+import { SongItem } from "../../data/SongData"
 import { ISong } from "../../view/ISong"
 import { SearchView } from "../../view/SearchView"
-export class ListSong{
-  img: string = ''
-  name: string = ''
-  singer: string=''
-}
+
 
 @Preview
 @Component
 export struct EAPage{
   @State isLoading: boolean = false
-  private listSong: ListSong[] = [
-    {
-      img: 'https://y.qq.com/music/photo_new/T002R300x300M000002Neh8l0uciQZ_3.jpg?max_age=2592000',
-      name: '兰亭序',
-      singer: '周杰伦'
-    },
-    {
-      img: 'https://y.qq.com/music/photo_new/T002R300x300M000000pVkCf3KsUQ9_1.jpg?max_age=2592000',
-      name: '天下',
-      singer: '张杰'
-    },
-    {
-      img: 'https://y.qq.com/music/photo_new/T002R300x300M000000uGdjk1J7qA2_2.jpg?max_age=2592000',
-      name: '牵丝线',
-      singer: '银临 /Aki阿杰'
-    },
-    {
-      img: 'https://y.qq.com/music/photo_new/T002R300x300M000004NoFkr1zhODu_2.jpg?max_age=2592000',
-      name: '相思遥',
-      singer: '魏玉慧'
-    },
-    {
-      img: 'https://y.qq.com/music/photo_new/T002R300x300M000002eFUFm2XYZ7z_3.jpg?max_age=2592000',
-      name: '青花瓷',
-      singer: '周杰伦'
-    },
-    {
-      img: 'https://y.qq.com/music/photo_new/T002R300x300M0000032ezFm3F53yO_3.jpg?max_age=2592000',
-      name: '七里香',
-      singer: '周杰伦'
-    },
-    {
-      img: 'https://y.qq.com/music/photo_new/T062R300x300M000000utC0R4P0aan.jpg?max_age=2592000',
-      name: '夜空中最亮的星',
-      singer: 'G.E.M. 邓紫棋'
-    },
-    {
-      img: 'https://y.qq.com/music/photo_new/T002R300x300M000002x2ZoC3PH2Ug_2.jpg?max_age=2592000',
-      name: '探窗',
-      singer: '汐音社'
-    }
-  ]
+  @State listSong:SongItem[] = []
+  @State page:number = 1
+  @State pageSize:number = 10
 
+  aboutToAppear(): void {
+    this.getSongList()
+  }
 
   build() {
     Scroll() {
@@ -62,6 +26,7 @@ export struct EAPage{
           .width(10)
           .height(10)
           .visibility(this.isLoading ? Visibility.Visible : Visibility.Hidden)
+
         Swiper(){
           Image('https://y.qq.com/music/photo_new/T002R300x300M000002TFrDN2XKDE3_1.jpg?max_age=2592000')
             .objectFit(ImageFit.Cover)
@@ -73,27 +38,73 @@ export struct EAPage{
         .width('100%')
         .height('30%')
 
-        List({ space: 10,initialIndex: 0}) {
-          ForEach(this.listSong, (item: ListSong) => {
-            ListItem() {
-              ISong({
-                img: item.img,
-                name: item.name,
-                singer: item.singer
-              })
+        if (this.listSong.length === 0 && !this.isLoading){
+          Text('暂无流行歌曲')
+            .fontSize(18)
+            .textAlign(TextAlign.Center)
+            .width('100%')
+            .margin({ top: 50 })
+        }else {
+          List({ space: 10,initialIndex: 0}) {
+            ForEach(this.listSong, (item: SongItem) => {
+              ListItem() {
+                ISong({ song: item})
+              }
+            })
+
+            // 可选：添加底部加载提示
+            if (this.isLoading && this.page > 1) {
+              ListItem() {
+                Flex({ justifyContent: FlexAlign.Center }) { // 使用 Flex 布局居中内容
+                  LoadingProgress()
+                    .width(50)
+                    .height(50)
+                    .margin({ top: 10,bottom: 10 })
+                }
+
+              }
+            }
+          }
+          .width('100%')
+          .layoutWeight(1)
+          .scrollBar(BarState.Off)
+          .margin({
+            top: 10
+          })
+          .onReachEnd(() => {
+            if (!this.isLoading && this.listSong.length >= this.page * this.pageSize) {
+              this.page += 1
+              this.getSongList()
             }
           })
         }
-        .width('90%')
-        .height('auto')
-        .scrollBar(BarState.Off)
-        .margin({
-          top: 10
-        })
       }
     }
+    .padding({
+      left:10,
+      right:10,
+      bottom:10
+    })
     .width('100%')
     .height('100%')
     .scrollBar(BarState.Off)
+
   }
+
+  private async getSongList(){
+    this.isLoading = true
+    const result = await getSongListByGenre<Page<SongItem[]>>(Genre.POP, this.page, this.pageSize)
+    if (result.code === '200') {
+      if (this.page === 1) {
+        this.listSong = result.data.records
+      } else {
+        this.listSong = [...this.listSong, ...result.data.records]
+      }
+      console.log('PopPage:', JSON.stringify(this.listSong))
+    } else {
+      console.error('请求失败:', result.msg)
+    }
+    this.isLoading = false
+  }
+
 }

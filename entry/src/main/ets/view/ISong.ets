@@ -1,25 +1,29 @@
+import { SongItem } from "../data/SongData"
+import { SongRepository } from "../data/SongRepository"
+import { MediaService } from "../service/MediaService"
+
+
 @Component
 @Preview
 export struct ISong{
-  @Prop img: string
-  @Prop name: string
-  @Prop singer: string
+  @Prop song:SongItem
+
   build(){
     Row(){
       Row({space: 20}){
-        Image(this.img)
+        Image(this.song.label)
           .width(50)
           .height(50)
           .borderRadius(10)
 
         Column(){
-          Text(this.name)
+          Text(this.song.title)
             .fontSize(16)
             .fontWeight(FontWeight.Bold)
             .textAlign(TextAlign.Start)
             .alignSelf(ItemAlign.Start)
 
-          Text(this.singer)
+          Text(this.song.singer)
             .fontSize(12)
             .textAlign(TextAlign.Start)
             .alignSelf(ItemAlign.Start)
@@ -46,5 +50,13 @@ export struct ISong{
     .width('100%')
     .height('auto')
     .justifyContent(FlexAlign.SpaceBetween)
+    .onClick(()=>{
+      this.handleSongClick()
+    })
   }
+
+  private handleSongClick(): void {
+    MediaService.getInstance().addSongToPlaylist(this.song)
+  }
+
 }

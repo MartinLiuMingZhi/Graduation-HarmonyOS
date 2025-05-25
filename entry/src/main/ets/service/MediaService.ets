@@ -12,7 +12,6 @@ import { BackgroundUtil } from "../utils/BackgroudUtil";
 import { SongConstants } from "../data/SongConstants";
 import { CardData } from "../data/CardData";
 import { formBindingData, formProvider } from "@kit.FormKit";
-import { getSongList, Song } from "../apis/song";
 import { SongRepository } from "../data/SongRepository";
 
 const TAG = "MediaService"
@@ -152,14 +151,13 @@ export class MediaService{
   }
   private async loadInitialSongs() {
     // 使用数据仓库获取歌曲
-    this.songList = await SongRepository.getInstance().getAllSongs();
+    this.songList = await SongRepository.getInstance().getSongs();
     AppStorage.setOrCreate('songList', this.songList);
   }
 
   // 替换原来的 loadSongList 方法
   public async loadCustomPlaylist(playlist: SongItem[]) {
     this.songList = playlist;
-    AppStorage.setOrCreate('songList', playlist);
     // 自动播放第一个
     if (this.songList.length > 0) {
       this.loadAssent(0);
@@ -168,9 +166,18 @@ export class MediaService{
 
   // 添加歌曲到播放列表
   public async addSongToPlaylist(song: SongItem) {
-    this.songList.push(song);
-    await SongRepository.getInstance().addSongToLocal(song as Song);
-    AppStorage.setOrCreate('songList', this.songList);
+    const exists = this.songList.some(item => item.id === song.id)
+    if (!exists) {
+      this.songList.push(song);
+      await SongRepository.getInstance().addSongToLocal(song);
+      // 添加后自动播放新歌曲
+      const index = this.songList.length - 1;
+      this.loadAssent(index); // 播放新增的歌曲
+      return  true;
+    }else {
+      Logger.info(TAG, '歌曲已存在，无法添加');
+      return false
+    }
   }
 
   // 从播放列表移除歌曲

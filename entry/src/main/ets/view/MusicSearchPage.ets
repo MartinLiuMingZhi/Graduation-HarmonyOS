@@ -34,7 +34,7 @@ export struct MusicSearchPage{
         }else{
           List({space:10}){
             ForEach(this.songList, (item:SongItem, index) => {
-              ISong({img:  item.label,name: item.title,singer: item.singer})
+              ISong({ song:item })
             })
           }
           .listDirection(Axis.Vertical)

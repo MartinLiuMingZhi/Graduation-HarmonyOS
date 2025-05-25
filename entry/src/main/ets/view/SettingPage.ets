@@ -86,6 +86,7 @@ export struct  SettingPage{
                       case 3:
                         //跳转到隐私设置页面
                       case 4:
+                        this.pathStack.pushPathByName('PrivacyPolicyPage',null)
                         //跳转到隐私政策管理页面
                         break;
                       case 5:

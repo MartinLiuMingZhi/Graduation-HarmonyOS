@@ -1,4 +1,4 @@
-import { SongItem } from "../viewmodel/SongItem";
+import { SongItem } from "../data/SongData";
 import { ControlAreaComponent } from "./ControlAreaComponent"
 
 @Preview

@@ -3,22 +3,21 @@ import { SearchView } from "./SearchView"
 import { PlayListItem } from "./PlayListItem"
 import { PreferencesUtil } from "../utils/PreferencesUtil"
 import { LoginResponse } from "../apis/login"
+import { getRandomSong } from "../apis/song"
+import { Page } from "../apis/BaseResponse"
+import { SongItem } from "../data/SongData"
 
 @Entry
 @Component
 export struct MinePage {
   @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
-  @State user:LoginResponse = {
-    userid: '',
-    username: '',
-    email: '',
-    avatar: '',
-    sex: '',
-    token: ''
-  }
+  @State user:LoginResponse = {} as LoginResponse
+  @State playListItems:SongItem[] = []
+  list:number[] = [1,2,3,4]
 
   aboutToAppear(): void {
     this.loadUserInfo()
+    this.getRecommend(1,9)
   }
 
   private async loadUserInfo(){
@@ -62,17 +61,14 @@ export struct MinePage {
                left: 30
              })
 
-           List({space: 10}){
-             PlayListItem({
-               PlayListName: '我的歌单1',
-               PlayListCover: 'https://p1.music.126.net/BKj1SfKtM7UiZYnIOWGmrw==/109951169999071719.jpg',
-               PlayListSongCount: '3首'
-             })
-             PlayListItem({
-               PlayListName: '我的歌单2',
-               PlayListCover: 'https://p1.music.126.net/BKj1SfKtM7UiZYnIOWGmrw==/109951169999071719.jpg',
-               PlayListSongCount: '3首'
-             })
+           List({ space: 10 }) {
+             ForEach(this.playListItems.slice(0, 3), (item: SongItem) => {
+               PlayListItem({
+                 PlayListName: item.title,
+                 PlayListCover: item.label,
+                 PlayListSongCount: '10首'
+               })
+             }, (item: SongItem) => item.id.toString())
            }
            .width('95%')
            .height('auto')
@@ -89,17 +85,14 @@ export struct MinePage {
                left: 30
              })
 
-           List({space: 10}){
-             PlayListItem({
-               PlayListName: '我的歌单1',
-               PlayListCover: 'https://p1.music.126.net/BKj1SfKtM7UiZYnIOWGmrw==/109951169999071719.jpg',
-               PlayListSongCount: '3首'
-             })
-             PlayListItem({
-               PlayListName: '我的歌单2',
-               PlayListCover: 'https://p1.music.126.net/BKj1SfKtM7UiZYnIOWGmrw==/109951169999071719.jpg',
-               PlayListSongCount: '3首'
-             })
+           List({ space: 10 }) {
+             ForEach(this.playListItems.slice(3, 6), (item: SongItem) => {
+               PlayListItem({
+                 PlayListName: item.title,
+                 PlayListCover: item.label,
+                 PlayListSongCount: '10首'
+               })
+             }, (item: SongItem) => item.id.toString())
            }
            .width('95%')
            .height('auto')
@@ -116,22 +109,14 @@ export struct MinePage {
                left: 30
              })
 
-           List({space: 10}){
-             PlayListItem({
-               PlayListName: '我的歌单1',
-               PlayListCover: 'https://p1.music.126.net/BKj1SfKtM7UiZYnIOWGmrw==/109951169999071719.jpg',
-               PlayListSongCount: '3首'
-             })
-             PlayListItem({
-               PlayListName: '我的歌单2',
-               PlayListCover: 'https://p1.music.126.net/BKj1SfKtM7UiZYnIOWGmrw==/109951169999071719.jpg',
-               PlayListSongCount: '3首'
-             })
-             PlayListItem({
-               PlayListName: '我的歌单2',
-               PlayListCover: 'https://p1.music.126.net/BKj1SfKtM7UiZYnIOWGmrw==/109951169999071719.jpg',
-               PlayListSongCount: '3首'
-             })
+           List({ space: 10 }) {
+             ForEach(this.playListItems.slice(6, 9), (item: SongItem) => {
+               PlayListItem({
+                 PlayListName: item.title,
+                 PlayListCover: item.label,
+                 PlayListSongCount: '10首'
+               })
+             }, (item: SongItem) => item.id.toString())
            }
            .listDirection(Axis.Horizontal)
            .width('95%')
@@ -146,14 +131,26 @@ export struct MinePage {
          .height('100%')
       }
       .scrollBar(BarState.Off)
-      .height(550)
+      .layoutWeight(1)
 
     }
+    .margin({
+      bottom:10
+    })
     .width('100%')
     .height('100%')
     .backgroundColor($r('app.color.white_background'))
   }
 
+  private async getRecommend(page:number,pageSize:number){
+    const result = await getRandomSong<Page<SongItem[]>>(page,pageSize)
+    if (result.code === '200') {
+      this.playListItems = result.data.records
+      console.log('mine:', JSON.stringify(this.playListItems))
+    } else {
+      console.error('请求失败:', result.msg)
+    }
+  }
 
 
 }

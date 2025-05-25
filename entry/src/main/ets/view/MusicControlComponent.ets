@@ -1,4 +1,4 @@
-import { SongItem } from "../viewmodel/SongItem";
+import { SongItem } from "../data/SongData";
 import { LyricsComponent } from "./LyricsComponent";
 import { MusicInfoComponent } from "./MusicInfoComponent";
 import { TopAreaComponent } from "./TopAreaComponent";
