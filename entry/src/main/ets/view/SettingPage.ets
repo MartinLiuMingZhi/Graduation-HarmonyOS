@@ -78,6 +78,7 @@ export struct  SettingPage{
                         break;
                       case 1:
                         //跳转到账号与安全页面
+                        this.pathStack.pushPathByName('AccountSafePage',null);
                         break;
                       case 2:
                         this.pathStack.pushPathByName('AddFriendView',null)

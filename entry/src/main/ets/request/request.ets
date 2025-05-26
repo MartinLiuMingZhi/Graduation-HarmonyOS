@@ -20,6 +20,7 @@ const instance = axios.create({
 // 添加请求拦截器
 instance.interceptors.request.use(async (config:InternalAxiosRequestConfig)=>{
   const token = await PreferencesUtil.getAsync('token')
+  console.info('token:' ,JSON.stringify(token))
   if (token) {
     config.headers['Authorization'] = 'Bearer ' + token;
   }

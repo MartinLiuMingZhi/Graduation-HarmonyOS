@@ -87,6 +87,14 @@
       "data": {
         "description" : "PrivacyPolicyPage"
       }
+    },
+    {
+      "name": "AccountSafePage",
+      "pageSourceFile": "src/main/ets/view/AccountSafePage.ets",
+      "buildFunction": "AccountSafePageBuilder",
+      "data": {
+        "description" : "AccountSafePage"
+      }
     }
 
 

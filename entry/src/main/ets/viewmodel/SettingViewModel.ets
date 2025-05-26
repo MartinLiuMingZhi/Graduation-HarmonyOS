@@ -5,7 +5,7 @@ export class SettingViewModel{
     let settingListData: ItemData[][] = [
       [
         new ItemData(0,'个人资料',SettingFieldType.TEXT),
-        new ItemData(1,'账号与安全',SettingFieldType.TEXT),
+        new ItemData(1,'修改密码',SettingFieldType.TEXT),
       ],
       [
         new ItemData(2, '关于',SettingFieldType.TEXT),
