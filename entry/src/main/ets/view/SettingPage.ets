@@ -3,6 +3,7 @@ import { PreferencesUtil } from "../utils/PreferencesUtil"
 import ItemData from "../viewmodel/ItemData"
 import SettingViewModel from "../viewmodel/SettingViewModel"
 import { promptAction, router } from "@kit.ArkUI"
+import { MediaService } from "../service/MediaService"
 
 @Builder
 export function SettingPageBuilder() {
@@ -176,8 +177,10 @@ export struct  SettingPage{
     try {
       const result = await logout<string>();
       if (result.code === '200') {
+        //如果有MediaService服务运行，释放资源，关闭播放的歌曲
+        await  MediaService.getInstance().pause()
+        await MediaService.getInstance().release()
         await PreferencesUtil.deleteAsync('token');
-
         //清空路由栈，并跳转登录页
         this.pathStack.clear();
         router.replaceUrl({ url: 'pages/LoginPage' });
