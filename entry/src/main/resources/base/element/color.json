@@ -91,6 +91,14 @@
     {
       "name": "item_select_background",
       "value": "#FF424542"
+    },
+    {
+      "name": "input_bg_select",
+      "value": "#331989fa"
+    },
+    {
+      "name": "input_bg",
+      "value": "#07000000"
     }
   ]
 }
