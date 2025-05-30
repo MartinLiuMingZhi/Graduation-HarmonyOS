@@ -82,14 +82,15 @@ export struct  SettingPage{
                         this.pathStack.pushPathByName('AccountSafePage',null);
                         break;
                       case 2:
-                        this.pathStack.pushPathByName('AddFriendView',null)
                         //跳转到关于页面
+                        this.pathStack.pushPathByName('AboutPage',null)
                         break;
                       case 3:
                         //跳转到隐私设置页面
+                        break;
                       case 4:
-                        this.pathStack.pushPathByName('PrivacyPolicyPage',null)
                         //跳转到隐私政策管理页面
+                        this.pathStack.pushPathByName('PrivacyPolicyPage',null)
                         break;
                       case 5:
                         //跳转到清除缓存页面

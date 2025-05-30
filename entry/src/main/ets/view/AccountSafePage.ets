@@ -1,4 +1,5 @@
 import { LoginResponse } from "../apis/login";
+import { sendCode } from "../apis/mail";
 import { PreferencesUtil } from "../utils/PreferencesUtil";
 
 @Builder
@@ -11,6 +12,7 @@ export struct AccountSafePage {
   private TAG:string = 'AccountSafePage';
   @State email:string = ''
   @State content:string = ''
+  @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
 
   aboutToAppear(): void {
     this.getUserInfo()
@@ -53,6 +55,10 @@ export struct AccountSafePage {
           .height(40)
           .type(ButtonType.Normal)
           .borderRadius(10)
+          .onClick(()=>{
+            this.getCode()
+            this.pathStack.pushPathByName("InputCodePage",this.email)
+          })
 
 
       }
@@ -63,6 +69,14 @@ export struct AccountSafePage {
         right:20
       })
     }
+  }
 
+  private async getCode(){
+    const result = await sendCode<string>(this.email)
+    if (result.code === '200') {
+      console.log(result.msg)
+    }else {
+      console.log("发送验证码失败")
+    }
   }
 }

@@ -34,3 +34,15 @@ export function getUserById<T>(id:number){
   })
 }
 
+interface ChangePasswordRequest{
+  oldPassword: string,
+  newPassword: string,
+  confirmPassword: string
+}
+export function changePassword<T>(data:ChangePasswordRequest){
+  return request<T>({
+    url:'/users/changePassword',
+    method:'POST',
+    data
+  })
+}

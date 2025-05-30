@@ -99,6 +99,10 @@
     {
       "name": "input_bg",
       "value": "#07000000"
+    },
+    {
+      "name": "text_color",
+      "value": "#80000000"
     }
   ]
 }

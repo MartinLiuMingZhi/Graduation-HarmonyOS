@@ -18,7 +18,7 @@ export struct CodeInputComponent{
             .codeInputStyle(this.index == item)
         })
       }
-      .width('82%')
+      .width('90%')
       .margin({
         top:20
       })
@@ -28,7 +28,7 @@ export struct CodeInputComponent{
           Line().cursorLine(this.index == item,this.cursorBg)
         },)
       }
-      .width('85%')
+      .width('93%')
       .margin({
         top:20
       })
@@ -39,7 +39,7 @@ export struct CodeInputComponent{
       TextInput({
         text:this.lastInputContent
       })
-        .width('82%')
+        .width('90%')
         .type(InputType.Number)
         .maxLength(this.codeLen)
         .fontSize(12)
@@ -91,8 +91,8 @@ export struct CodeInputComponent{
 }
 //扩展Text属性
 @Extend(Text) function codeInputStyle(select:boolean){
-  .width(44)
-  .height(44)
+  .width(50)
+  .height(50)
   .fontSize(18)
   .textAlign(TextAlign.Center)
   .backgroundColor(select?$r('app.color.input_bg_select'):$r('app.color.input_bg'))

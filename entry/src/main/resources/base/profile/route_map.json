@@ -95,6 +95,30 @@
       "data": {
         "description" : "AccountSafePage"
       }
+    },
+    {
+      "name": "InputCodePage",
+      "pageSourceFile": "src/main/ets/view/InputCodePage.ets",
+      "buildFunction": "InputCodePageBuilder",
+      "data": {
+        "description": "InputCodePage"
+      }
+    },
+    {
+      "name": "ChangePasswordPage",
+      "pageSourceFile": "src/main/ets/view/ChangePasswordPage.ets",
+      "buildFunction": "ChangePasswordPageBuilder",
+      "data": {
+        "description" : "ChangePassword"
+      }
+    },
+    {
+      "name": "AboutPage",
+      "pageSourceFile": "src/main/ets/view/AboutPage.ets",
+      "buildFunction": "AboutPageBuilder",
+      "data": {
+        "description" : "AboutPage"
+      }
     }
 
 
