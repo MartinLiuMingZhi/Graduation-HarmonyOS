@@ -8,9 +8,9 @@ export struct MessageItem {
    build() {
      Row(){
        Image(this.item.avatar)
-         .width(40)
-         .height(40)
-         .borderRadius(20)
+         .width(50)
+         .height(50)
+         .borderRadius(25)
          .margin({
            right: 10
          })
@@ -18,32 +18,29 @@ export struct MessageItem {
        Column(){
          Row(){
            Text(this.item.username)
-             .fontSize(14)
+             .fontSize(15)
              .fontWeight(FontWeight.Normal)
 
            Text(this.item.lastTime)
-             .fontSize(10)
+             .fontSize(12)
              .fontColor(Color.Gray)
-             .margin({
-               right:10
-             })
          }
          .justifyContent(FlexAlign.SpaceBetween)
-         .width('90%')
+         .width('85%')
          .margin({
            bottom:5
          })
 
          Text(this.item.lastMessage)
            .width('80%')
-           .fontSize(10)
+           .fontSize(12)
            .fontColor(Color.Gray)
            .textOverflow({ overflow: TextOverflow.Ellipsis })
            .maxLines(1)
            .textAlign(TextAlign.Start) // 确保文本左对齐
 
        }
-       .width('100%')
+       .width('auto')
        .alignItems(HorizontalAlign.Start)
      }
      .width('100%')

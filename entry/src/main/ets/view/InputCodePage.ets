@@ -45,28 +45,29 @@ export struct InputCodePage{
         })
 
         Row(){
-          Text(`验证码已经发送到您的邮箱：${this.email}`)
-            .fontSize(14)
+          Text(`验证码已经发送到您的邮箱:${this.email}`)
+            .fontSize(13)
             .fontColor($r('app.color.text_color'))
 
           Text('重新发送')
-            .fontSize(14)
+            .fontSize(13)
             .fontColor(this.TimeDown > 0 ? $r('app.color.text_color') : $r('app.color.blue'))
             .onClick(()=>{
               this.startCountdown()
             })
-
-          if (this.TimeDown > 0){
-            Text(`(${this.TimeDown}s)`)
-              .fontSize(14)
-              .fontColor($r('app.color.text_color'))
-          }
         }
         .width('100%')
         .margin({
-          top:30,
-          bottom:10
+          top:30
         })
+
+        if (this.TimeDown > 0){
+          Text(`(${this.TimeDown}s)`)
+            .fontSize(13)
+            .fontColor($r('app.color.text_color'))
+            .width('100%')
+            .textAlign(TextAlign.Start)
+        }
 
         Text('未收到验证码？')
           .fontColor($r('app.color.blue'))

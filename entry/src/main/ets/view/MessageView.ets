@@ -15,13 +15,8 @@ export struct MessageView {
   @State selectedAction: string = '';
   @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
   @State contactList: ContactItem[] = []
-  @State user: UserDTO = {
-    userid: '',
-    username: '',
-    email: '',
-    avatar: '',
-    sex: ''
-  };
+  @State user: UserDTO = {} as UserDTO
+  @State currentIndex: number = 0;
 
   // 下拉选项配置
   private dropdownOptions: SelectItem[] = [
@@ -156,13 +151,17 @@ export struct MessageView {
             right:30
           })
 
-          ForEach(this.contactList, (item: ContactItem) => {
-            MessageItem({item: item})
-              .onClick(async ()=>{
+          ForEach(this.contactList, (item: ContactItem,index:number) => {
+            ListItem(){
+              MessageItem({item: item})
+                .onClick(async ()=>{
                   await this.getUserInfo(Number(item.userId))
                   console.log('点击了用户:', JSON.stringify(this.user))
                   this.pathStack.pushPathByName('ChatView',this.user)
-              })
+                })
+            }
+            .width('100%')
+            .height('10%')
           })
 
         }
