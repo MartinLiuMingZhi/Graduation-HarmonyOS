@@ -8,7 +8,7 @@ import { MediaService } from '../service/MediaService';
 
 @Entry
 @Component
-struct CodeLoginPage {
+export struct CodeLoginPage {
   @State email: string = '';
   @State code: string = '';
   @State isLoading: boolean = false;

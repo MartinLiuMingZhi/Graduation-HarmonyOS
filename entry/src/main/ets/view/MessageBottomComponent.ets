@@ -8,6 +8,7 @@ export struct MessageBottomComponent {
   @Prop toUserId: number
   @Link messageList: Message[]
   private textController: TextAreaController = new TextAreaController()
+  private sendMessage?:(message:string) => void
 
   build() {
     Row() {
@@ -24,10 +25,10 @@ export struct MessageBottomComponent {
         .height(30)
         .borderRadius(5)
         .onClick(() => {
-          console.log('点击了按钮')
-          this.sendMessage()
-          //清空输入框
-          this.message = ''
+          if (this.sendMessage) {
+            this.sendMessage(this.message)
+            this.message = ''
+          }
         })
         .margin({
           left: 10
@@ -46,14 +47,14 @@ export struct MessageBottomComponent {
     .padding(10)
   }
 
-  private async sendMessage() {
-    // 发送消息
-    const result = await sendSingleMessage<Message>(this.toUserId, this.message)
-    if (result.code === '200') {
-      console.log('SendMessage:', JSON.stringify(result.data))
-      // this.messageList.push(result.data)
-    } else {
-      console.error('SendMessage:', JSON.stringify(result.msg))
-    }
-  }
+  // private async sendMessage() {
+  //   // 发送消息
+  //   const result = await sendSingleMessage<Message>(this.toUserId, this.message)
+  //   if (result.code === '200') {
+  //     console.log('SendMessage:', JSON.stringify(result.data))
+  //     // this.messageList.push(result.data)
+  //   } else {
+  //     console.error('SendMessage:', JSON.stringify(result.msg))
+  //   }
+  // }
 }

@@ -1,13 +1,22 @@
 import { FriendRequestResponse, getUserByEmailOrUsername } from "../apis/user"
 import { promptAction } from "@kit.ArkUI"
 import { FriendRequestItem } from "./FriendRequestItem"
-import { FriendRequests, sendFriendRequest } from "../apis/friend"
+import { FriendRequests, recommendFriend, sendFriendRequest } from "../apis/friend"
+import { Page } from "../apis/BaseResponse"
 
 @Component
 export struct FriendRequestView{
   @State emailOrUsername: string = ''
   @State friendRequestList: FriendRequestResponse[] = [] // 添加@State装饰器
   @State isLoading: boolean = false // 新增加载状态
+  @State recommendedFriends: FriendRequestResponse[] = [] // 新增：推荐好友列表
+  @State isDataLoaded: boolean = false // 新增状态：是否已加载完数据
+
+  aboutToAppear(): void {
+    this.loadRecommendedFriends()
+    console.log('FriendRequestView aboutToAppear')
+    console.log("加载推荐",JSON.stringify(this.recommendedFriends))
+  }
 
   build() {
     Column() {
@@ -41,34 +50,77 @@ export struct FriendRequestView{
         .height(5)
         .visibility(this.isLoading ? Visibility.Visible : Visibility.Hidden)
 
-      List({ space: 10 }) {
-        if (this.friendRequestList.length === 0 && !this.isLoading) {
-          ListItem() {
-            Text("暂无搜索结果")
-              .fontSize(16)
-              .textAlign(TextAlign.Center)
-              .width('100%')
-              .margin({
-                top:10
+      if (this.isDataLoaded){
+        List({ space: 10 }) {
+          // 搜索结果优先展示
+          if (this.friendRequestList.length > 0) {
+            ForEach(this.friendRequestList, (item: FriendRequestResponse) => {
+              ListItem() {
+                FriendRequestItem({
+                  item: item,
+                  onCustomClick: () => {
+                    this.handleAddFriend(Number(item.userid))
+                  }
+                })
+                  .onClick(() => {
+                    // 可选跳转逻辑
+                    // router.pushUrl({ url: 'pages/UserDetailPage', params: { userId: item.id } })
+                  })
+              }
+            })
+          } else if (!this.emailOrUsername.trim()) {
+            // 显示推荐好友
+            if (this.recommendedFriends.length === 0) {
+              ListItem() {
+                Text("暂无推荐好友")
+                  .fontSize(16)
+                  .textAlign(TextAlign.Center)
+                  .width('100%')
+                  .margin({ top: 10 })
+              }
+            } else {
+              ListItem() {
+                Text("推荐好友")
+                  .fontSize(16)
+                  .fontWeight(FontWeight.Bold)
+                  .margin({ top: 10 })
+                }
+              ForEach(this.recommendedFriends, (item: FriendRequestResponse) => {
+                ListItem() {
+                  FriendRequestItem({
+                    item: item,
+                    onCustomClick: () => {
+                      this.handleAddFriend(Number(item.userid))
+                    }
+                  })
+                    .onClick(() => {
+                      // 可选跳转逻辑
+                      // router.pushUrl({ url: 'pages/UserDetailPage', params: { userId: item.id } })
+                    })
+                }
               })
+            }
+          } else {
+            // 搜索但无结果
+            ListItem() {
+              Text("暂无搜索结果")
+                .fontSize(16)
+                .textAlign(TextAlign.Center)
+                .width('100%')
+                .margin({ top: 10 })
+            }
           }
         }
-
-        ForEach(this.friendRequestList, (item: FriendRequestResponse) => {
-          ListItem() {
-            FriendRequestItem({ item: item , onCustomClick:()=>{ this.handleAddFriend(Number(item.userid))}})
-              .onClick(() => {
-                // 跳转到用户详情页
-                // router.pushUrl({ url: 'pages/UserDetailPage', params: { userId: item.id } })
-              })
-          }
-        }, (item: FriendRequestResponse) => item.toString())
+        .layoutWeight(1)
+        .padding(5)
+      }else {
+        // 可选：显示“正在加载”提示
+        Text("正在加载推荐好友...")
+          .fontSize(16)
+          .textAlign(TextAlign.Center)
+          .width('100%')
+          .margin({ top: 20 })
       }
-      .layoutWeight(1)
-      .padding(5)
-
-
-
 
     }
     .width('100%')
@@ -111,6 +163,25 @@ export struct FriendRequestView{
       }
     }catch (e){
       console.error('请求失败:', e)
+    }
+  }
+
+  private async loadRecommendedFriends() {
+    this.isDataLoaded  = false
+    try {
+      const result = await recommendFriend<Page<FriendRequestResponse[]>>()
+      if (result.code === '200') {
+        this.recommendedFriends = result.data.records
+        console.log('加载推荐好友成功:', JSON.stringify(this.recommendedFriends))
+      } else {
+        console.warn('加载推荐好友失败:', result.msg)
+        this.recommendedFriends = []
+      }
+    } catch (error) {
+      console.error('请求失败:', error)
+      this.recommendedFriends = []
+    }finally {
+      this.isDataLoaded  = true
     }
   }
 }

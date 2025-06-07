@@ -1,23 +1,42 @@
 import webSocket from '@ohos.net.webSocket';
 import { BusinessError } from '@kit.BasicServicesKit';
+// 引入 STOMP 客户端
+import {Stomp, CompatClient,StompSubscription,FrameImpl } from '@ohos/stompjs';
+import { PreferencesUtil } from '../utils/PreferencesUtil';
+import { Message } from '../apis/message';
 
-// 单例模式
+export interface MessageDTO {
+  toUserId: number;
+  content: string;
+}
+
+interface StompMessage {
+  body: string;
+}
 
 export class WebSocketManager {
-
   private static instance: WebSocketManager;
-  private  ws: webSocket.WebSocket;
-  private  defaultIpAddress:string;
-  private heartbeatInterval: number = 20000; // 20秒
-  private heartbeatMessage: string = 'ping'; // 心跳消息
-  private heartbeatTimer: number | undefined; // 用于保存定时器ID
+  private defaultIpAddress: string = "ws://10.0.2.2:5600/ws";
+  private heartbeatInterval: number = 5000; // 每5秒发送一次心跳
+  private compatClient: CompatClient | undefined;
+  private isConnect: boolean = false;
+  private subscriptions: Map<string, StompSubscription> = new Map(); // 存储订阅
+  private reconnectAttempts: number = 0; // 当前重试次数
+  private maxReconnectAttempts: number = 5; // 最大重试次数
+  private reconnectInterval: number = 5000; // 每隔多久重试一次（ms）
+  private reconnectTimer: number | undefined;
 
   private constructor() {
-    // 私有构造函数，防止外部实例化对象
-    this.ws = webSocket.createWebSocket();
-    this.defaultIpAddress = "ws://10.0.2.2:8080/ws";
+    // 初始化STOMP客户端
+    this.compatClient = Stomp.client(this.defaultIpAddress);
+    // 设置默认心跳间隔（outgoing 和 incoming）
+    if (this.compatClient) {
+      this.compatClient.heartbeat.outgoing = this.heartbeatInterval;
+      this.compatClient.heartbeat.incoming = this.heartbeatInterval;
+    }
   }
 
+  // 获取单例实例
   public static getInstance(): WebSocketManager {
     if (!WebSocketManager.instance) {
       WebSocketManager.instance = new WebSocketManager();
@@ -25,128 +44,118 @@ export class WebSocketManager {
     return WebSocketManager.instance;
   }
 
-  //  根据URL地址，建立一个WebSocket连接。
-  public async connect(){
-    this.ws.connect(this.defaultIpAddress,(err: BusinessError,value: boolean)=>{
-      if (!err) {
-        console.log("Connected successfully");
-      } else {
-        console.log("Connection failed. Err:" + JSON.stringify(err));
-      }
-    })
+  //连接到WebSocket
+  public async connect(): Promise<void> {
+    if (this.isConnect || !this.compatClient) {
+      console.warn('Already connected or not initialized.');
+      return;
+    }
+    const token = await PreferencesUtil.getAsync('token')
+    console.log("token:"+token)
+    this.compatClient?.connect({Authorization: `Bearer ${token}`}, (frame: FrameImpl) => {
+        console.log('Connected to WebSocket:', frame);
+        this.isConnect = true;
+        this.reconnectAttempts = 0; // 成功连接后重置重试次数
+    },
+      (error:  BusinessError)=>{
+        console.log('WebSocket error:', error);
+        this.isConnect = false;
+        this.handleReconnect(); // 启动自动重连
+      })
+    console.log('Connecting to WebSocket...')
+    console.log("Connect状态"+this.isConnect)
   }
 
-  //关闭WebSocket连接
-  public async close(){
-    this.ws.close((err: BusinessError,value: boolean)=>{
-      if (!err) {
-        console.log("Close successfully");
-      } else {
-        console.log("Close failed. Err:" + JSON.stringify(err));
-      }
-    })
-  }
-
-  // 订阅WebSocket的打开事件。
-  public async subscribeOpen(content:string){
-    this.ws.on('open', (err: BusinessError, value: Object)=>{
-      console.log("on open, status:" + JSON.stringify(value));
-      // 当收到on('open')事件时，可以通过send()方法与服务器进行通信
-      this.ws.send(content, (err: BusinessError, value: boolean) => {
-        if (!err) {
-          console.log("Message send successfully");
-        } else {
-          console.log("Failed to send the message. Err:" + JSON.stringify(err));
-        }
-      });
-    })
-  }
-
-  // 取消订阅WebSocket的打开事件。
-  public async unsubscribeOpen(){
-    this.ws.off('open');
-  }
-
-  //订阅WebSocket的接收到服务器消息事件。
-  public async subscribeMessage(callback:(message:string)=>void){
-    this.ws.on('message', (err: BusinessError, value: string | ArrayBuffer) => {
-      if (!err && typeof value === 'string') {
-        console.log("Received message:" + value);
-        if (value === 'pong') {
-          console.log("Received pong response.");
-        } else {
-          console.log("Received business message:" + value);
-          callback(value); // 正常业务消息回调
-        }
-      } else {
-        console.error("Failed to receive the message. Err:" + JSON.stringify(err));
-      }
+  //断开连接
+  public disconnect(): void {
+    if (!this.compatClient || !this.isConnect){
+      console.warn('Not connected or not initialized.');
+      return;
+    }
+    this.compatClient.disconnect(() => {
+      console.log("Disconnected from WebSocket");
+      this.isConnect = false;
+      this.subscriptions.forEach(sub => sub.unsubscribe());
+      this.subscriptions.clear();
     });
   }
 
-  // 取消订阅WebSocket的接收到服务器消息事件。
-  public async unsubscribeMessage(){
-    this.ws.off('message');
-  }
-
-  // 订阅WebSocket的关闭事件。
-  public async subscribeClose(){
-    this.ws.on('close', (err: BusinessError, value: webSocket.CloseResult)=>{
-      console.log("on close, status:" + JSON.stringify(value));
-    })
-  }
-
-  // 取消订阅WebSocket的关闭事件。
-  public async unsubscribeClose(){
-    this.ws.off('close');
-  }
-
-  // 订阅WebSocket的Error事件。
-  public async subscribeError(){
-    this.ws.on('error', (err: BusinessError)=>{
-      console.log("on error, status:" + JSON.stringify(err));
-    })
-  }
-
-  // 取消订阅WebSocket的Error事件。
-  public async unsubscribeError(){
-    this.ws.off('error');
-  }
-
-  // 启动心跳机制
-  public startHeartbeat(): void {
-    if (this.heartbeatTimer) {
-      clearInterval(this.heartbeatTimer); // 防止重复启动
+  //订阅节点并接收WebSocket数据。
+  public subscribe(topic: string, callback: (message: Message) => void): void {
+    if (!this.compatClient || !this.isConnect) {
+      console.warn(`Cannot subscribe to ${topic}: Not connected`);
+      return;
     }
-    this.heartbeatTimer = setInterval(() => {
-      if (this.ws) {
-        console.log("Sending heartbeat...");
-        this.ws.send(this.heartbeatMessage, (err: BusinessError, value: boolean) => {
-          if (!err) {
-            console.log("Heartbeat sent successfully");
-          } else {
-            console.error("Failed to send heartbeat. Err:" + JSON.stringify(err));
-            this.handleConnectionError(); // 可触发重连逻辑
-          }
-        });
+
+    if (this.subscriptions.has(topic)) {
+      console.warn(`Already subscribed to topic: ${topic}`);
+      return;
+    }
+
+    const subscription = this.compatClient.subscribe(topic, (message: StompMessage) => {
+      try {
+        const messageDto: Message = JSON.parse(message.body)
+        console.log(`Received message from ${topic}:`, messageDto);
+        callback(messageDto); // 或者直接传整个对象
+      } catch (error) {
+        console.error("Failed to parse message:", error);
       }
-    }, this.heartbeatInterval);
+    });
+
+    this.subscriptions.set(topic, subscription);
+    console.log(`Subscribed to topic: ${topic}`);
   }
 
-  // 停止心跳机制
-  public stopHeartbeat(): void {
-    if (this.heartbeatTimer) {
-      clearInterval(this.heartbeatTimer);
-      this.heartbeatTimer = undefined;
+  //取消订阅
+  public unsubscribe(topic: string): void {
+    const subscription = this.subscriptions.get(topic);
+    if (subscription) {
+      subscription.unsubscribe();
+      this.subscriptions.delete(topic);
+      console.log(`Unsubscribed from topic: ${topic}`);
     }
   }
 
-  // 处理连接异常（如重启连接或重连）
-  private handleConnectionError(): void {
-    console.warn("Connection lost. Attempting to reconnect...");
-    this.stopHeartbeat();
-    setTimeout(() => {
-      this.connect().then(() => this.startHeartbeat());
-    }, 5000); // 5秒后尝试重连
+  //发送数据
+  // 发送消息到指定目的地（如 /app/send/single）
+  public send(destination: string, body: MessageDTO): void {
+    if (!this.compatClient || !this.isConnect) {
+      console.warn("Not connected, message not sent.");
+      return;
+    }
+
+    this.compatClient.send(destination, {}, JSON.stringify(body));
+    console.log(`Message sent to ${destination}`, body);
   }
+
+  // 获取当前连接状态
+  public isConnected(): boolean {
+    return this.isConnect;
+  }
+
+  // 自动重连方法
+  private handleReconnect(): void {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      console.warn('Maximum reconnect attempts reached. Giving up.');
+      return;
+    }
+
+    this.reconnectAttempts += 1;
+    console.log(`Attempting to reconnect... Attempt ${this.reconnectAttempts} of ${this.maxReconnectAttempts}`);
+
+    this.reconnectTimer = setTimeout(() => {
+      this.connect().catch(console.error);
+    }, this.reconnectInterval);
+  }
+
+  // 主动触发重连
+  public reconnect(): void {
+    if (!this.isConnect) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectAttempts = 0;
+      this.connect().catch(console.error);
+    }
+  }
+
+
 }

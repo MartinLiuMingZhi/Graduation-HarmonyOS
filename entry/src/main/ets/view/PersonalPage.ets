@@ -2,7 +2,7 @@ import { LoginResponse } from "../apis/login";
 import { PreferencesUtil } from "../utils/PreferencesUtil";
 import ItemData, { SettingFieldType } from "../viewmodel/ItemData"
 import PersonalViewModel from "../viewmodel/PersonalViewModel"
-import { promptAction } from "@kit.ArkUI";
+import { PromptAction, promptAction } from "@kit.ArkUI";
 
 @Builder
 export function PersonalPageBuilder() {
@@ -13,6 +13,8 @@ export function PersonalPageBuilder() {
 export struct PersonalPage{
   @State user:LoginResponse = {} as LoginResponse;
   @State isLoading: boolean = true;
+  @State username:string = ''
+  @State sex:string = ''
 
   @Builder
   settingCell(item: ItemData) {
@@ -166,11 +168,40 @@ export struct PersonalPage{
     //进行换头像
   }
 
-  private usernameClick(){
+  private usernameClick() {
 
   }
+
 
   private sexClick(){
-
+    // this.getUIContext().showActionSheet({
+    //   title: '性别',
+    //   width: 300,
+    //   height: 300,
+    //   cancel,
+    //   confirm: {
+    //     value:  '保存',
+    //     action: () => {
+    //       console.log('保存性别:', this.sex)
+    //     }
+    //   },
+    //   alignment: DialogAlignment.Center,
+    //   sheets: [
+    //     {
+    //       title: '男',
+    //       action: () => {
+    //         this.sex  = '男'
+    //       }
+    //     },
+    //     {
+    //       title: '女',
+    //       action: () => {
+    //         this.sex = '女'
+    //       }
+    //     }
+    //   ]
+    // })
   }
+
+
 }

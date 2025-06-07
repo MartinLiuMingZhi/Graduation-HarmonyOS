@@ -1,5 +1,5 @@
 import { LoginResponse } from "../apis/api";
-import { getSingleHistoryMessages, Message } from "../apis/message";
+import { getSingleHistoryMessages, Message, sendSingleMessage } from "../apis/message";
 import { UserDTO } from "../apis/user";
 import { WebSocketManager } from "../request/WebSocketManager";
 import { PreferencesUtil } from "../utils/PreferencesUtil";
@@ -14,60 +14,51 @@ export function ChatViewBuilder() {
 @Component
 export struct ChatView {
   @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
-  @State userInfo: UserDTO = {
-    userid: '',
-    username: '',
-    email: '',
-    avatar: '',
-    sex: ''
-  };
+  @State userInfo: UserDTO = {} as UserDTO;
   @State messageList: Message[] = [];
   @State isLoading: boolean = false;
-  @State  user:LoginResponse = {
-    userid: '',
-    username: '',
-    email: '',
-    avatar: '',
-    sex: '',
-    token: ''
-  };
+  @State  user:LoginResponse = {} as LoginResponse;
   private scrollController: Scroller = new Scroller();
-  // private wsManager: WebSocketManager = WebSocketManager.getInstance();
-  @State private pollInterval: number = 5000; // 轮询间隔时间（毫秒）
+  private wsManager: WebSocketManager = WebSocketManager.getInstance();
+  @State private pollInterval: number = 3000; // 轮询间隔时间（毫秒）
   private pollingTimer: number | undefined;   // 定时器引用
   // 记录最后一条消息 ID，用于判断是否有新增消息
   @State private lastMessageId: string = '';
-
+  @State isUsingPolling: boolean = false; // 是否正在使用轮询兜底
 
 
   aboutToAppear(): void {
-    // this.wsManager.connect();
-    // this.wsManager.startHeartbeat();
-    //
-    // // 订阅消息
-    // this.wsManager.subscribeMessage((rawMessage: string) => {
-    //   try {
-    //     const message:Message = JSON.parse(rawMessage); // 解析为对象
-    //
-    //     console.info('收到新消息:', message);
-    //
-    //     // 判断是否是当前聊天用户的对话
-    //     if (message.fromUserId === this.userInfo.userid ||
-    //       message.toUserId === this.user.userid) {
-    //       // 更新 messageList，触发 UI 刷新
-    //       this.messageList = [...this.messageList, message];
-    //     }
-    //   } catch (e) {
-    //     console.error('消息解析失败:', rawMessage);
-    //   }
-    // });
+    // this.connectAndSubscribe();
 
     // 加载用户信息并加载聊天记录
     this.loadUserInfoAndMessages();
-
-    // 启动轮询
     this.startPolling();
   }
+
+  private async connectAndSubscribe() {
+    try {
+      await this.wsManager.connect();
+
+      const userId = this.userInfo.userid;
+      const topic = `/queue/user/${userId}`;
+
+      this.wsManager.subscribe(topic, (message: Message) => {
+        if (message.fromUserId === this.userInfo.userid || message.toUserId === this.user.userid) {
+          this.messageList = [...this.messageList, message];
+          this.lastMessageId = message.id as string;
+          this.scrollToBottom();
+        }
+      });
+
+      this.isUsingPolling = false;
+      this.stopPolling(); // 关闭轮询
+    } catch (error) {
+      console.warn("WebSocket connection failed, fallback to polling", error);
+      this.isUsingPolling = true;
+      this.startPolling(); // 启用轮询兜底
+    }
+  }
+
 
   private async fetchNewMessages() {
     try {
@@ -75,6 +66,7 @@ export struct ChatView {
       if (result.code === '200') {
         const newMessages = result.data.slice(result.data.findIndex(msg => msg.id === this.lastMessageId) + 1);
 
+        console.info('newMessages',JSON.stringify(newMessages))
         if (newMessages.length > 0) {
           this.messageList = [...this.messageList, ...newMessages];
           this.lastMessageId = newMessages[newMessages.length - 1].id; // 更新最新消息ID
@@ -87,11 +79,12 @@ export struct ChatView {
   }
 
   aboutToDisappear(): void {
-    // this.wsManager = WebSocketManager.getInstance();
-    // this.wsManager.stopHeartbeat();
-    // this.wsManager.close();
+    const userId = this.userInfo.userid;
+    const topic = `/queue/user/${userId}`;
+    this.wsManager.unsubscribe(topic); // 取消订阅
 
-    this.stopPolling();
+    this.stopPolling()
+    this.isUsingPolling = true
   }
 
   private async loadUserInfoAndMessages(): Promise<void> {
@@ -122,17 +115,18 @@ export struct ChatView {
     const result = await getSingleHistoryMessages<Message[]>(Number(this.userInfo.userid))
     if (result.code === '200'){
       this.messageList = result.data
+      if (result.data.length > 0) {
+        this.lastMessageId = result.data[result.data.length - 1].id; // 设置初始 lastMessageId
+      }
       this.scrollToBottom(); // ✅ 加载完成后滚动到底部
     }
   }
 
-  // private async onMessageSent(message: Message) {
-  //   // 在发送消息成功后更新消息列表
-  //   await this.getMessageInit();
-  // }
-
   // 启动轮询
   private startPolling() {
+    if (this.pollingTimer) {
+      return; // 避免重复启动定时器
+    }
     this.pollingTimer = setInterval(() => {
       this.fetchNewMessages();
     }, this.pollInterval);
@@ -168,7 +162,12 @@ export struct ChatView {
         .width('100%')
         .layoutWeight(1)
 
-        MessageBottomComponent({ toUserId: Number(this.userInfo.userid),messageList:this.messageList})
+        MessageBottomComponent({
+          toUserId: Number(this.userInfo.userid),
+          messageList:this.messageList,
+          sendMessage:(content:string)=>{
+            this.handleSendMessage(content);
+          }})
           .width('100%')
           .padding(10)
       }
@@ -177,4 +176,42 @@ export struct ChatView {
     }
     .title(this.userInfo.username)
   }
+
+  // private handleSendMessage(content: string) {
+  //   if (!content.trim()) return;
+  //
+  //   const newMessage: Message = {
+  //     id: Date.now().toString(),
+  //     content: content,
+  //     fromUserId: this.user.userid,
+  //     toUserId: this.userInfo.userid,
+  //     sendTime: new Date().toISOString()
+  //   };
+  //
+  //   this.messageList = [...this.messageList, newMessage];
+  //   this.lastMessageId = newMessage.id;
+  //   this.scrollToBottom();
+  //
+  //   // 发送 WebSocket 消息
+  //   this.wsManager.send("/app/send/single", {
+  //     toUserId: Number(this.userInfo.userid),
+  //     content: content
+  //   });
+  // }
+
+
+  private async handleSendMessage(content: string) {
+    const result = await sendSingleMessage<Message>(Number(this.userInfo.userid), content)
+    if (result.code === '200') {
+      console.log('SendMessage:', JSON.stringify(result.data))
+      this.messageList = [...this.messageList, result.data]
+      this.lastMessageId = result.data.id
+      this.scrollToBottom()
+    } else {
+      console.error('SendMessage:', JSON.stringify(result.msg))
+    }
+
+  }
+
+
 }

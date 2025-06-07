@@ -10,7 +10,7 @@ export function ScanBarCodePageBuilder() {
 
 
 @Component
-struct ScanBarCodePage {
+export struct ScanBarCodePage {
   build() {
     NavDestination(){
       Column() {

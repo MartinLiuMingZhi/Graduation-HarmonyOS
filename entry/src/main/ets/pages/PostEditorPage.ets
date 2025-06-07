@@ -12,7 +12,7 @@ export function PostEditorPageBuilder() {
 
 @Preview
 @Component
-struct PostEditorPage {
+export struct PostEditorPage {
   @State title: string = ''
   @State content: string = ''
   @State selectedImages: string[] = []

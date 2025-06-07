@@ -41,3 +41,10 @@ export function getFriendList<T>(page: number, pageSize: number){
     params: { page, pageSize }
   })
 }
+
+export function recommendFriend<T>(){
+  return request<T>({
+    url:'/friends/recommend',
+    method:'GET'
+  })
+}

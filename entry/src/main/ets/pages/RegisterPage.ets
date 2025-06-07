@@ -8,7 +8,7 @@ import { MediaService } from '../service/MediaService';
 
 @Entry
 @Component
-struct RegisterPage {
+export struct RegisterPage {
   @State email: string = '';
   @State code: string = '';
   @State password: string = '';

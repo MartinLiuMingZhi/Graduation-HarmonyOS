@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig,AxiosRequestConfig } from '@ohos/axios'
 import { Logger } from '../utils/Logger';
 import { PreferencesUtil } from '../utils/PreferencesUtil';
+import { router } from '@kit.ArkUI';
 
 interface BaseResponse<T>{
   code?:string,
@@ -57,6 +58,7 @@ const handleResponseError = (response: AxiosResponse) => {
       PreferencesUtil.deleteAsync('token');
       Logger.info('Token expired or invalid. Redirect to login page.');
       // 这里可以添加跳转到登录页面的逻辑
+      router.replaceUrl({ url: 'pages/LoginPage' })
       break;
     case 403:
       Logger.info('Forbidden: You do not have permission to access this resource.');

@@ -7,7 +7,7 @@ import { MediaService } from '../service/MediaService';
 
 @Entry
 @Component
-struct LoginPage {
+export struct LoginPage {
   @State email: string = '';
   @State password: string = '';
   @State isLoading: boolean = false;
@@ -47,6 +47,9 @@ struct LoginPage {
         Text("忘记密码")
           .fontColor($r('app.color.blue'))
           .fontSize(14)
+          .onClick(()=>{
+            router.pushUrl({ url: 'pages/ForgetPasswordPage' })
+          })
       }
       .width("90%")
       .justifyContent(FlexAlign.SpaceBetween)

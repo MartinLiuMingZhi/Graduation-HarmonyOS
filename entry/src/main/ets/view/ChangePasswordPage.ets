@@ -1,5 +1,6 @@
 import { changePassword } from "../apis/api"
 import { PasswordRule } from "../data/PasswordRule"
+import { PasswordStrengthUtil } from "../utils/PasswordStrengthUtil"
 import { PasswordStrengthProgressBar } from "./PasswordStrengthProgressBar"
 
 @Builder
@@ -20,22 +21,6 @@ export struct ChangePasswordPage {
   @State isSubmitting: boolean = false // 提交状态
 
   @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
-
-  // 密码强度检测
-  private checkPasswordStrength(password: string): void {
-    const regex:PasswordRule = {
-      strong: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,  // 强密码：至少8位字母、数字和特殊字符
-      medium: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,  // 中等密码：至少6位字母和数字
-    }
-
-    if (regex.strong.test(password)) {
-      this.passwordStrength = '强'
-    } else if (regex.medium.test(password)) {
-      this.passwordStrength = '中'
-    } else {
-      this.passwordStrength = '弱'
-    }
-  }
 
   // 处理修改密码逻辑
   private async handleChangePassword() {
@@ -100,7 +85,7 @@ export struct ChangePasswordPage {
             .width('90%')
             .onChange((value: string) => {
               this.newPassword = value
-              this.checkPasswordStrength(value)
+              this.passwordStrength = PasswordStrengthUtil.checkPasswordStrength(value)
             })
             .borderWidth(1)
             .borderColor('#CCCCCC')

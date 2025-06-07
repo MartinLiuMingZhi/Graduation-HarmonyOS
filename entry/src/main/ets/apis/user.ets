@@ -46,3 +46,35 @@ export function changePassword<T>(data:ChangePasswordRequest){
     data
   })
 }
+
+interface ForgetPasswordRequest{
+  email: string,
+  code: string,
+  password: string,
+  confirmPassword: string
+}
+export function forgetPassword<T>(data: ForgetPasswordRequest){
+  return request<T>({
+    url:'/users/forgetPassword',
+    method:'PUT',
+    data
+  })
+}
+
+interface User{
+  userId: number,
+  username: string,
+  password: string,
+  email: string,
+  avatar: string,
+  sex: string,
+  createdTime:  string,
+  musicPreferences:string
+}
+export function update<T>(data: User){
+  return request<T>({
+    url:'/users/update',
+    method:'PUT',
+    data
+  })
+}
