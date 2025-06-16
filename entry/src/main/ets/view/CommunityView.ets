@@ -9,7 +9,7 @@ import { getPostList } from "../apis/post";
 @Component
 export struct CommunityView {
   @State items: DynamicItemData[] = []
-  private dataSource: DynamicDataSource = new DynamicDataSource();
+  @State dataSource: DynamicDataSource = new DynamicDataSource();
 
   @StorageLink('pathStack') pathStack: NavPathStack = new NavPathStack();
 
